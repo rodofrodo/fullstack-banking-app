@@ -5,8 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import pl.straczek.portfolio_backend.model.AppUser;
 import pl.straczek.portfolio_backend.model.BankAccount;
+import pl.straczek.portfolio_backend.model.Transaction;
 import pl.straczek.portfolio_backend.repository.AppUserRepository;
 import pl.straczek.portfolio_backend.repository.BankAccountRepository;
+import pl.straczek.portfolio_backend.repository.TransactionRepository;
 
 import java.math.BigDecimal;
 import java.util.Random;
@@ -18,13 +20,16 @@ public class BankAccountController
 {
     private final BankAccountRepository accountRepository;
     private final AppUserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
     // ctor
     public BankAccountController(BankAccountRepository accountRepository,
-                                 AppUserRepository userRepository)
+                                 AppUserRepository userRepository,
+                                 TransactionRepository transactionRepository)
     {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     // identification method (JWT-based)
@@ -88,6 +93,33 @@ public class BankAccountController
         accountRepository.save(senderAccount);
         accountRepository.save(receiverAccount);
 
+        // tracking the history of transactions
+        Transaction transaction = new Transaction(
+                request.fromAccountNumber(),
+                request.toAccountNumber(),
+                request.amount(),
+                java.time.LocalDateTime.now()
+        );
+        transactionRepository.save(transaction);
+
         return "Transfer (" + request.amount() + " PLN) has been sent successfully";
+    }
+
+    // getting the history of transactions (therefore GET)
+    @GetMapping("/transactions/{accountNumber}")
+    public Object getTransactionHistory(@PathVariable String accountNumber)
+    {
+        AppUser user = getLoggedInUser();
+
+        // checking if such an account exists
+        BankAccount account = accountRepository.findByAccountNumber(accountNumber).orElse(null);
+        if (account == null)
+            return "Error: This account doesn't exist";
+        // we make sure the user requests his own account history
+        if (!account.getOwner().getId().equals(user.getId()))
+            return "Error: You don't have permission to browse this account history";
+
+        // returning the list of transactions
+        return transactionRepository.findBySenderAccountNumberOrReceiverAccountNumberOrderByTimestampDesc(accountNumber, accountNumber);
     }
 }

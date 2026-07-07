@@ -38,7 +38,7 @@ function Login({ onLoginSuccess }) {
             maxWidth: '300px',
             margin: '20px auto'
         }}>
-            <h2>Logowanie</h2>
+            <h2>Sign into your account</h2>
             <form onSubmit={handleLogin} style={{
                 display: 'flex',
                 flexDirection: 'column',

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-function Login({ onLoginSuccess }) {
+function Login({ onLoginSuccess, navigateTo }) {
     // here React "remembers" what we type in
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -64,6 +64,11 @@ function Login({ onLoginSuccess }) {
             </form>
             {/* message (if need be) */}
             { message && <p style={{ marginTop: '15px', fontWeight: 'bold' }}>{message}</p> }
+            <button 
+                onClick={() => navigateTo('home')} 
+                style={{ marginTop: '20px', cursor: 'pointer', background: 'none', border: 'none', color: '#007bff', textDecoration: 'underline' }}>
+                ⬅️ Go back to Home Page
+            </button>
         </div>
     );
 }

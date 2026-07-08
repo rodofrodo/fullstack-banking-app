@@ -2,10 +2,10 @@ import { useState } from 'react';
 import axios from 'axios';
 
 function Register({ navigateTo }) {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+	const [username, setUsername] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [message, setMessage] = useState('');
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -33,7 +33,7 @@ function Register({ navigateTo }) {
 
     return (
 		<div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px', maxWidth: '300px', margin: '20px auto', fontFamily: 'sans-serif' }}>
-			<h2>Rejestracja</h2>
+			<h2>Sign-up Page</h2>
 			
 			<form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
 			<input 

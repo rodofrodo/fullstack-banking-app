@@ -7,6 +7,7 @@ function Dashboard() {
     const [amount, setAmount] = useState('');
     const [message, setMessage] = useState('');
     const [transactions, setTransactions] = useState([]);
+    const [accountMessage, setAccountMessage] = useState('');
 
     // downloading the history from backend
     const fetchHistory = async (accountNum) => {
@@ -33,6 +34,35 @@ function Dashboard() {
     useEffect(() => {
         fetchHistory(fromAccount);
     }, [fromAccount]);
+
+    // creating a bank account
+    const handleCreateAccount = async () => {
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+            setMessage('❌ No token! You need to sign in first.');
+            return;
+        }
+
+        try {
+            const response = await axios.post(
+                'http://localhost:8080/api/accounts/create',
+                {},
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + token
+                    }
+                }
+            );
+
+            setAccountMessage('✅ ' + response.data);
+        } catch (error) {
+            if (error.response) {
+                setMessage('❌ Denied: ' + error.response.data);
+            } else {
+                setMessage('❌ Server connection error.');
+            }
+        }
+    };
 
     const handleTransfer = async (e) => {
         e.preventDefault();
@@ -85,6 +115,33 @@ function Dashboard() {
 
     return (
         <div style={{ maxWidth: '600px', margin: '20px auto', fontFamily: 'sans-serif' }}>
+            {/* Account Creation Panel (NOWY BLOK) */}
+            <div style={{ 
+                border: '1px solid #ffc107', 
+                padding: '20px', 
+                borderRadius: '8px', 
+                maxWidth: '400px', 
+                margin: '20px auto', 
+                backgroundColor: '#fffdf6' 
+            }}>
+                <h2 style={{ color: '#d39e00', marginTop: 0 }}>My Accounts</h2>
+                <button 
+                    onClick={handleCreateAccount} 
+                    style={{ 
+                        cursor: 'pointer', 
+                        padding: '10px 15px', 
+                        backgroundColor: '#ffc107', 
+                        color: '#333', 
+                        border: 'none', 
+                        borderRadius: '5px',
+                        fontWeight: 'bold',
+                        width: '100%'
+                    }}>
+                    ➕ Open new bank account
+                </button>
+                {accountMessage && <p style={{ marginTop: '15px', fontWeight: 'bold', color: accountMessage.includes('✅') ? 'green' : 'red' }}>{accountMessage}</p>}
+            </div>
+
             {/* Transfer Panel */}
             <div style={{ 
                 border: '1px solid #007bff', 

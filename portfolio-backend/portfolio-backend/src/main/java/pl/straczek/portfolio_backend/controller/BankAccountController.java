@@ -122,4 +122,11 @@ public class BankAccountController
         // returning the list of transactions
         return transactionRepository.findBySenderAccountNumberOrReceiverAccountNumberOrderByTimestampDesc(accountNumber, accountNumber);
     }
+
+    @GetMapping("/my")
+    public Object getMyAccounts()
+    {
+        AppUser user = getLoggedInUser();
+        return accountRepository.findByOwner(user);
+    }
 }

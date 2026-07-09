@@ -8,6 +8,26 @@ function Dashboard() {
     const [message, setMessage] = useState('');
     const [transactions, setTransactions] = useState([]);
     const [accountMessage, setAccountMessage] = useState('');
+    const [accounts, setAccounts] = useState([]);
+
+    const fetchAccounts = async () => {
+        const token = localStorage.getItem('jwt_token');
+        if (!token) return;
+
+        try {
+            const response = await axios.get(
+                'http://localhost:8080/api/accounts/my',
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + token
+                    }
+                }
+            );
+            setAccounts(response.data);
+        } catch (error) {
+            console.error("Cannot download the accounts: ", error);
+        }
+    };
 
     // downloading the history from backend
     const fetchHistory = async (accountNum) => {
@@ -30,6 +50,10 @@ function Dashboard() {
             console.error("Cannot download the history: ", error);
         }
     };
+
+    useEffect(() => {
+        fetchAccounts();
+    }, []);
 
     useEffect(() => {
         fetchHistory(fromAccount);
@@ -55,6 +79,7 @@ function Dashboard() {
             );
 
             setAccountMessage('✅ ' + response.data);
+            fetchAccounts();
         } catch (error) {
             if (error.response) {
                 setMessage('❌ Denied: ' + error.response.data);
@@ -95,7 +120,8 @@ function Dashboard() {
         setMessage('✅ ' + response.data);
         setAmount('');
 
-        // history of transactions
+        // update
+        fetchAccounts();
         fetchHistory(fromAccount);
         
         } catch (error) {
@@ -125,6 +151,41 @@ function Dashboard() {
                 backgroundColor: '#fffdf6' 
             }}>
                 <h2 style={{ color: '#d39e00', marginTop: 0 }}>My Accounts</h2>
+
+                {/* list of accounts */}
+                {accounts.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+                        {accounts.map(acc => (
+                            <div 
+                                key={acc.id} 
+                                // trick: after clicking an account, its number is going to be set in the form!
+                                onClick={() => setFromAccount(acc.accountNumber)}
+                                style={{ 
+                                    padding: '12px', 
+                                    border: '2px solid #ffeeba', 
+                                    borderRadius: '8px', 
+                                    backgroundColor: '#fff',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                                }}>
+                                <div style={{ textAlign: 'left' }}>
+                                    <span style={{ display: 'block', fontSize: '12px', color: '#888' }}>Account number</span>
+                                    <strong style={{ fontSize: '14px', color: '#333' }}>{acc.accountNumber}</strong>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    <span style={{ display: 'block', fontSize: '12px', color: '#888' }}>Balance</span>
+                                    <strong style={{ fontSize: '16px', color: '#28a745' }}>{acc.balance} PLN</strong>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p style={{ color: '#666', fontStyle: 'italic' }}>You don't have any accounts yet.</p>
+                )}
+
                 <button 
                     onClick={handleCreateAccount} 
                     style={{ 

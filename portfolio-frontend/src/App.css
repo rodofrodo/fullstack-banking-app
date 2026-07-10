@@ -99,3 +99,36 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
+
+/* --- PHONE VERSION --- */
+@media (max-width: 600px) {
+  
+    /* this card is going to be full-screen on mobile */
+    .home-gradient-card {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        padding: 60px 30px;
+        justify-content: center;
+    }
+
+    .home-title {
+        font-size: 26px; /* <- for phone; 32px for PC */
+        margin-bottom: 60px;
+    }
+
+    .btn-primary, 
+    .btn-secondary {
+        width: 85%;
+        max-width: 300px;
+        padding: 14px 20px;
+    }
+
+    /* little adjustments of the logo */
+    .home-logo {
+        top: 25px;
+        left: 25px;
+        font-size: 18px;
+        z-index: 10;
+    }
+}

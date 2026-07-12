@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import './Login.css';
 
 function Login({ onLoginSuccess, navigateTo }) {
     // here React "remembers" what we type in
@@ -31,44 +32,65 @@ function Login({ onLoginSuccess, navigateTo }) {
     };
 
     return (
-        <div style={{
-            border: '1px solid #ccc',
-            padding: '20px',
-            borderRadius: '8px',
-            maxWidth: '300px',
-            margin: '20px auto'
-        }}>
-            <h2>Sign into your account</h2>
-            <form onSubmit={handleLogin} style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px'
-            }}>
-                <input
-                    type='email'
-                    placeholder='Email'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type='password'
-                    placeholder='Password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type='submit' style={{ cursor: 'pointer', padding: '8px' }}>
-                    Sign In
-                </button>
-            </form>
-            {/* message (if need be) */}
-            { message && <p style={{ marginTop: '15px', fontWeight: 'bold' }}>{message}</p> }
-            <button 
-                onClick={() => navigateTo('home')} 
-                style={{ marginTop: '20px', cursor: 'pointer', background: 'none', border: 'none', color: '#007bff', textDecoration: 'underline' }}>
-                ⬅️ Go back to Home Page
-            </button>
+        <div className="split-layout">
+            {/* left side - branding */}
+            <div className="split-left">
+                <div className="split-logo">Ancient Bank</div>
+            </div>
+
+            {/* right side - log in form */}
+            <div className="split-right">
+                <div className="form-wrapper">
+                    
+                    <div className="form-header">
+                        <h2>Sign into your account</h2>
+                        <p>Every great goal begins with one login.</p>
+                    </div>
+
+                    <form onSubmit={handleLogin} className="auth-form">
+                        <div className="input-group">
+                            <label>Email</label>
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="input-group">
+                            <label>Password</label>
+                            <input
+                                type="password"
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                        
+                        <div className="forgot-password">
+                            <span className="link-text">Forgot password?</span>
+                        </div>
+
+                        <button type="submit" className="btn-submit">
+                            Sign in
+                        </button>
+                    </form>
+
+                    {message && <p className="error-message">{message}</p>}
+
+                    <div className="help-links">
+                        Can't sign in? <span className="link-text">Reset password</span>
+                    </div>
+
+                    <div className="form-footer">
+                        Don't have an account? <span className="link-text" onClick={() => navigateTo('register')}>Sign up</span>
+                    </div>
+
+                </div>
+            </div>
         </div>
     );
 }

@@ -1,0 +1,134 @@
+/* -- STYLES FOR MAIN PAGE (Home.jsx) -- */
+
+.home-container {
+    height: 100vh; /* the whole screen */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    position: relative;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.home-logo {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    font-weight: 800;
+    font-size: 20px;
+    color: #000000;
+    letter-spacing: -0.5px;
+}
+
+.home-gradient-card {
+    /* from Figma */
+    background-image: url('./assets/noise-blue-NS.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 4px;
+    padding: 80px 60px;
+    width: 100%;
+    max-width: 950px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 10px 40px rgba(0, 102, 255, 0.15);
+}
+
+.home-title {
+    text-align: left;
+    font-size: 40px;
+    font-weight: 700;
+    color: #000000;
+    line-height: 1.2;
+    margin-top: 120px;
+}
+
+.home-buttons-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px; /* gap between buttons */
+}
+
+/* LOG IN */
+.btn-primary {
+    width: 400px;
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(90deg, #000000 0%, #0055ff 100%);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 85, 255, 0.3);
+}
+
+/* SIGN UP */
+.btn-secondary {
+    width: 400px;
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: 1px solid #00027D;
+    background: transparent;
+    color: #00027D;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.home-footer {
+    position: absolute;
+    bottom: 20px;
+    font-size: 10px;
+    color: #999999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- PHONE VERSION --- */
+@media (max-width: 600px) {
+  
+    /* this card is going to be full-screen on mobile */
+    .home-gradient-card {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        padding: 60px 30px;
+        justify-content: center;
+    }
+
+    .home-title {
+        font-size: 26px; /* <- for phone; 32px for PC */
+        margin-bottom: 60px;
+    }
+
+    .btn-primary, 
+    .btn-secondary {
+        width: 85%;
+        max-width: 300px;
+        padding: 14px 20px;
+    }
+
+    /* little adjustments of the logo */
+    .home-logo {
+        top: 25px;
+        left: 25px;
+        font-size: 18px;
+        z-index: 10;
+    }
+}

@@ -1,7 +1,9 @@
 import React from 'react';
 import './Home.css';
+import { useNavigate } from 'react-router-dom';
 
-function Home({ navigateTo }) {
+function Home() {
+    const navigate = useNavigate();
     return (
         <div className='home-container'>
             {/* top-left corner logo */}
@@ -17,14 +19,14 @@ function Home({ navigateTo }) {
                 <div className='home-buttons-wrapper'>
                     <button
                         className='btn-primary'
-                        onClick={() => navigateTo('login')}
+                        onClick={() => navigate('/login')}
                     >
                         Log in
                     </button>
 
                     <button
                         className='btn-secondary'
-                        onClick={() => navigateTo('register')}
+                        onClick={() => navigate('/register')}
                     >
                         Sign up
                     </button>

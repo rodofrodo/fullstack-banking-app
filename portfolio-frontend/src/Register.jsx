@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-function Register({ navigateTo }) {
+function Register() {
+	const navigate = useNavigate();
+
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -36,36 +39,36 @@ function Register({ navigateTo }) {
 			<h2>Sign-up Page</h2>
 			
 			<form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-			<input 
-				type="text" 
-				placeholder="Username" 
-				value={username}
-				onChange={(e) => setUsername(e.target.value)}
-				required 
-			/>
-			<input 
-				type="email" 
-				placeholder="Email" 
-				value={email}
-				onChange={(e) => setEmail(e.target.value)}
-				required 
-			/>
-			<input 
-				type="password" 
-				placeholder="Password" 
-				value={password}
-				onChange={(e) => setPassword(e.target.value)}
-				required 
-			/>
-			<button type="submit" style={{ cursor: 'pointer', padding: '8px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px' }}>
-				Sign Up
-			</button>
+				<input 
+					type="text" 
+					placeholder="Username" 
+					value={username}
+					onChange={(e) => setUsername(e.target.value)}
+					required 
+				/>
+				<input 
+					type="email" 
+					placeholder="Email" 
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+					required 
+				/>
+				<input 
+					type="password" 
+					placeholder="Password" 
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+					required 
+				/>
+				<button type="submit" style={{ cursor: 'pointer', padding: '8px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px' }}>
+					Sign Up
+				</button>
 			</form>
 
 			{message && <p style={{ marginTop: '15px', fontWeight: 'bold' }}>{message}</p>}
 
 			<button 
-				onClick={() => navigateTo('home')} 
+				onClick={() => navigate('/')} 
 				style={{ marginTop: '20px', cursor: 'pointer', background: 'none', border: 'none', color: '#007bff', textDecoration: 'underline' }}>
 				⬅️ Go back to Home Page
 			</button>

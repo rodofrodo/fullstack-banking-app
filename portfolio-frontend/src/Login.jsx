@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
+import { useNavigate } from 'react-router-dom';
 
-function Login({ onLoginSuccess, navigateTo }) {
+function Login({ onLoginSuccess }) {
+    const navigate = useNavigate();
+
     // here React "remembers" what we type in
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -86,7 +89,7 @@ function Login({ onLoginSuccess, navigateTo }) {
                     </div>
 
                     <div className="form-footer">
-                        Don't have an account? <span className="link-text" onClick={() => navigateTo('register')}>Sign up</span>
+                        Don't have an account? <span className="link-text" onClick={() => navigate('/register')}>Sign up</span>
                     </div>
 
                 </div>

@@ -1,5 +1,7 @@
 package pl.straczek.portfolio_backend.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pl.straczek.portfolio_backend.model.AppUser;
@@ -34,34 +36,41 @@ public class AppUserController
 
     // endpoint to register a user (POST https://localhost:8080/api/users)
     @PostMapping
-    public String registerUser(@RequestBody AppUser user)
+    public ResponseEntity<String> registerUser(@RequestBody AppUser user)
     {
         if (userRepository.existsByEmail(user.getEmail()))
-            return "Error: this email is currently in use";
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Error: this email is currently in use");
 
         // hashing user's password
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
 
         userRepository.save(user);
-        return "Success: User " + user.getUsername() + " has been successfully registered!";
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("Success: User " + user.getUsername() + " has been successfully registered!");
     }
 
     // endpoint to log in (POST https://localhost:8080/api/users/login)
     @PostMapping("/login")
-    public String loginUser(@RequestBody AppUser loginRequest)
+    public ResponseEntity<String> loginUser(@RequestBody AppUser loginRequest)
     {
         // we're looking for a user in database by email address
-        Optional<AppUser> userOptional = userRepository.findAll().stream()
-                .filter(u -> u.getEmail().equals(loginRequest.getEmail()))
-                .findFirst();
+        Optional<AppUser> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+
         if (userOptional.isEmpty())
-            return "Error: there is no user with such an email!";
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Error: there is no user with such an email!");
 
         AppUser user = userOptional.get();
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()))
-            return "Error: wrong password!";
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Error: wrong password!");
 
-        return jwtService.generateToken(user);
+        return ResponseEntity.ok(jwtService.generateToken(user));
     }
 }

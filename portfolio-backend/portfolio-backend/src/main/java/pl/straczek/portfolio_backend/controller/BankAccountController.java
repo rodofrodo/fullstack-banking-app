@@ -1,5 +1,7 @@
 package pl.straczek.portfolio_backend.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +61,7 @@ public class BankAccountController
     // transferring money
     @PostMapping("/transfer")
     @Transactional
-    public String transferMoney(@RequestBody TransferRequest request)
+    public ResponseEntity<String> transferMoney(@RequestBody TransferRequest request)
     {
         AppUser user = getLoggedInUser();
 
@@ -69,13 +71,24 @@ public class BankAccountController
                 .orElse(null);
 
         if (senderAccount == null)
-            return "Error: You don't have a bank account";
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Error: You don't have a bank account");
+
         if (!senderAccount.getOwner().getId().equals(user.getId()))
-            return "Error: You don't have permission to send money from this account";
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("Error: You don't have permission to send money from this account");
+
         if (senderAccount.getBalance().compareTo(request.amount()) < 0)
-            return "Error: Too little money on your account";
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Error: Too little money on your account");
+
         if (request.amount().compareTo(BigDecimal.ZERO) <= 0)
-            return "Error: Amount must be a number above zero";
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Error: Amount must be a number above zero");
 
         // we're looking for a receiver
         BankAccount receiverAccount = accountRepository
@@ -83,7 +96,9 @@ public class BankAccountController
                 .orElse(null);
 
         if (receiverAccount == null)
-            return "Error: The receiver account doesn't exist";
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Error: The receiver account doesn't exist");
 
         // we subtract from the sender and add to the receiver
         senderAccount.setBalance(senderAccount.getBalance().subtract(request.amount()));
@@ -102,7 +117,7 @@ public class BankAccountController
         );
         transactionRepository.save(transaction);
 
-        return "Transfer (" + request.amount() + " PLN) has been sent successfully";
+        return ResponseEntity.ok("Transfer (" + request.amount() + " PLN) has been sent successfully");
     }
 
     // getting the history of transactions (therefore GET)

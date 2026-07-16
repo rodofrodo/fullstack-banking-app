@@ -155,29 +155,29 @@
 
 /* WERSJA MOBILNA LOGIN */
 @media (max-width: 768px) {
-  .split-layout {
-    flex-direction: column;
-    overflow-y: auto;
-  }
-  
-  .split-left {
-    flex: 0 0 250px;
-  }
-  
-  .split-logo {
-    bottom: 30px;
-    left: 30px;
-    font-size: 28px;
-  }
-  
-  .split-right {
-    padding-top: 40px;
-    padding-bottom: 40px;
-    align-items: flex-start;
-  }
-  
-  .form-footer {
-    position: static;
-    margin-top: 50px;
-  }
+	.split-layout {
+		flex-direction: column;
+		overflow-y: auto;
+	}
+	
+	.split-left {
+		flex: 0 0 250px;
+	}
+	
+	.split-logo {
+		bottom: 30px;
+		left: 30px;
+		font-size: 28px;
+	}
+	
+	.split-right {
+		padding-top: 40px;
+		padding-bottom: 40px;
+		align-items: flex-start;
+	}
+	
+	.form-footer {
+		position: static;
+		margin-top: 50px;
+	}
 }

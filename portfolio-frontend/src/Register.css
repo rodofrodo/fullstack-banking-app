@@ -1,0 +1,170 @@
+/* --- Register.css --- */
+
+.split-layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.split-left {
+    flex: 1;
+    background-image: url('./assets/noise-blue-NS.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #0066ff;
+    position: relative;
+}
+
+.split-logo {
+    position: absolute;
+    bottom: 60px;
+    left: 60px;
+    font-size: 54px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -1px;
+}
+
+.split-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    position: relative;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 580px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.form-header h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.form-header p {
+    font-size: 16px;
+    color: #666666;
+    margin: 0;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    padding: 14px 16px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.input-group input:focus {
+    border-color: #0055ff;
+}
+
+.btn-submit {
+    align-self: center;
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    min-width: 300px;
+}
+
+.btn-submit:hover {
+    opacity: 0.8;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.form-footer {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    color: #666666;
+}
+
+.link-text {
+    color: #000000;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* WERSJA MOBILNA REJESTRACJA */
+@media (max-width: 768px) {
+    .split-layout {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    
+    .split-left {
+        flex: 0 0 250px;
+    }
+    
+    .split-logo {
+        bottom: 30px;
+        left: 30px;
+        font-size: 28px;
+    }
+    
+    .split-right {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        align-items: flex-start;
+    }
+    
+    .form-footer {
+        position: static;
+        margin-top: 50px;
+    }
+}

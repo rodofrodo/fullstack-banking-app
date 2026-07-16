@@ -39,7 +39,9 @@ function Register() {
         <div className="split-layout">
             {/* Lewa strona - Branding */}
             <div className="split-left">
-                <div className="split-logo">Ancient Bank</div>
+                <div className="split-logo" onClick={() => navigate('/')}>
+                    Ancient Bank
+                </div>
             </div>
 
             {/* Prawa strona - Formularz rejestracji */}

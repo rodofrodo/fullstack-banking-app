@@ -26,6 +26,7 @@
     font-weight: 700;
     color: #ffffff;
     letter-spacing: -1px;
+	cursor: pointer;
 }
 
 .split-right {
@@ -51,11 +52,11 @@
 }
 
 .form-header h2 {
-  font-size: 32px;
-  font-weight: 700;
-  color: #000000;
-  margin-bottom: 16px;
-  letter-spacing: -0.5px;
+	font-size: 32px;
+	font-weight: 700;
+	color: #000000;
+	margin-bottom: 16px;
+	letter-spacing: -0.5px;
 }
 
 .form-header p {

@@ -38,7 +38,9 @@ function Login({ onLoginSuccess }) {
         <div className="split-layout">
             {/* left side - branding */}
             <div className="split-left">
-                <div className="split-logo">Ancient Bank</div>
+                <div className="split-logo" onClick={() => navigate('/')}>
+                    Ancient Bank
+                </div>
             </div>
 
             {/* right side - log in form */}

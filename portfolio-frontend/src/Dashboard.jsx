@@ -1,5 +1,6 @@
 import { useEffect, useEffectEvent, useState } from 'react';
 import axios from 'axios';
+import CurrencyWidget from './CurrencyWidget';
 
 function Dashboard() {
     const [fromAccount, setFromAccount] = useState('');
@@ -141,6 +142,9 @@ function Dashboard() {
 
     return (
         <div style={{ maxWidth: '600px', margin: '20px auto', fontFamily: 'sans-serif' }}>
+
+            <CurrencyWidget/>
+
             {/* Account Creation Panel (NOWY BLOK) */}
             <div style={{ 
                 border: '1px solid #ffc107', 

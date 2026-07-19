@@ -180,8 +180,13 @@ function Dashboard() {
                                     <strong style={{ fontSize: '14px', color: '#333' }}>{acc.accountNumber}</strong>
                                 </div>
                                 <div style={{ textAlign: 'right' }}>
-                                    <span style={{ display: 'block', fontSize: '12px', color: '#888' }}>Balance</span>
-                                    <strong style={{ fontSize: '16px', color: '#28a745' }}>{acc.balance} PLN</strong>
+                                    <span style={{ display: 'block', fontSize: '12px', color: '#888', marginBottom: '2px' }}>Balances</span>
+                                    {/* we iterate over the wallets array instead of the removed acc.balance */}
+                                    {acc.wallets && acc.wallets.map(wallet => (
+                                        <strong key={wallet.currency} style={{ display: 'block', fontSize: '16px', color: '#28a745' }}>
+                                            {wallet.balance} {wallet.currency}
+                                        </strong>
+                                    ))}
                                 </div>
                             </div>
                         ))}

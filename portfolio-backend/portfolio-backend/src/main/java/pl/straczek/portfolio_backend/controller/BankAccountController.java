@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.straczek.portfolio_backend.model.AppUser;
 import pl.straczek.portfolio_backend.model.BankAccount;
 import pl.straczek.portfolio_backend.model.Transaction;
+import pl.straczek.portfolio_backend.model.Wallet;
 import pl.straczek.portfolio_backend.repository.AppUserRepository;
 import pl.straczek.portfolio_backend.repository.BankAccountRepository;
 import pl.straczek.portfolio_backend.repository.TransactionRepository;
@@ -52,7 +53,10 @@ public class BankAccountController
 
         // generating random 26-digit bank account number
         String accountNumber = "PL" + (100000000000000000L + (long)(new Random().nextDouble() * 900000000000000000L));
-        BankAccount account = new BankAccount(accountNumber, new BigDecimal("100.00"), user);
+
+        BankAccount account = new BankAccount(accountNumber, user);
+        Wallet defaultPlnWallet = new Wallet("PLN", new BigDecimal("100.00"), account);
+        account.getWallets().add(defaultPlnWallet);
         accountRepository.save(account);
 
         return "Created an account for " + user.getUsername() + ". Account number: " + accountNumber + " | Balance: 100 PLN";
@@ -80,10 +84,20 @@ public class BankAccountController
                     .status(HttpStatus.FORBIDDEN)
                     .body("Error: You don't have permission to send money from this account");
 
-        if (senderAccount.getBalance().compareTo(request.amount()) < 0)
+        Wallet senderPlnWallet = senderAccount.getWallets().stream()
+                .filter(w -> w.getCurrency().equals("PLN"))
+                .findFirst()
+                .orElse(null);
+
+        if (senderPlnWallet == null)
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Error: Too little money on your account");
+                    .body("Error: You don't have a PLN wallet to send money from.");
+
+        if (senderPlnWallet.getBalance().compareTo(request.amount()) < 0)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Error: Too little money in your PLN account");
 
         if (request.amount().compareTo(BigDecimal.ZERO) <= 0)
             return ResponseEntity
@@ -100,9 +114,20 @@ public class BankAccountController
                     .status(HttpStatus.NOT_FOUND)
                     .body("Error: The receiver account doesn't exist");
 
+        Wallet receiverPlnWallet = receiverAccount.getWallets().stream()
+                .filter(w -> w.getCurrency().equals("PLN"))
+                .findFirst()
+                .orElse(null);
+
+        if (receiverPlnWallet == null)
+        {
+            receiverPlnWallet = new Wallet("PLN", BigDecimal.ZERO, receiverAccount);
+            receiverAccount.getWallets().add(receiverPlnWallet);
+        }
+
         // we subtract from the sender and add to the receiver
-        senderAccount.setBalance(senderAccount.getBalance().subtract(request.amount()));
-        receiverAccount.setBalance(receiverAccount.getBalance().add(request.amount()));
+        senderPlnWallet.setBalance(senderPlnWallet.getBalance().subtract(request.amount()));
+        receiverPlnWallet.setBalance(receiverPlnWallet.getBalance().add(request.amount()));
 
         // saving changes to the database
         accountRepository.save(senderAccount);

@@ -15,6 +15,7 @@ public class Transaction
     private String senderAccountNumber;
     private String receiverAccountNumber;
     private BigDecimal amount;
+    private String currency;
     private LocalDateTime timestamp;
 
     // empty constructor
@@ -24,11 +25,13 @@ public class Transaction
     public Transaction(String senderAccountNumber,
                        String receiverAccountNumber,
                        BigDecimal amount,
+                       String currency,
                        LocalDateTime timestamp)
     {
         this.senderAccountNumber = senderAccountNumber;
         this.receiverAccountNumber = receiverAccountNumber;
         this.amount = amount;
+        this.currency = currency;
         this.timestamp = timestamp;
     }
 
@@ -39,6 +42,7 @@ public class Transaction
     public String getSenderAccountNumber() { return senderAccountNumber; }
     public String getReceiverAccountNumber() { return receiverAccountNumber; }
     public BigDecimal getAmount() { return amount; }
+    public String getCurrency() { return currency; }
     public LocalDateTime getTimestamp() { return timestamp; }
 
     /*
@@ -48,5 +52,6 @@ public class Transaction
     public void setSenderAccountNumber(String senderAccountNumber) { this.senderAccountNumber = senderAccountNumber; }
     public void setReceiverAccountNumber(String receiverAccountNumber) { this.receiverAccountNumber = receiverAccountNumber; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public void setCurrency(String currency) { this.currency = currency; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 }

@@ -10,6 +10,7 @@ function Dashboard() {
     const [transactions, setTransactions] = useState([]);
     const [accountMessage, setAccountMessage] = useState('');
     const [accounts, setAccounts] = useState([]);
+    const [currency, setCurrency] = useState('PLN');
 
     const fetchAccounts = async () => {
         const token = localStorage.getItem('jwt_token');
@@ -90,6 +91,7 @@ function Dashboard() {
         }
     };
 
+    // transfering money
     const handleTransfer = async (e) => {
         e.preventDefault();
 
@@ -108,7 +110,8 @@ function Dashboard() {
                 {
                     fromAccountNumber: fromAccount,
                     toAccountNumber: toAccount,
-                    amount: parseFloat(amount)
+                    amount: parseFloat(amount),
+                    currency: currency
                 },
                 {
                     headers: {
@@ -117,13 +120,13 @@ function Dashboard() {
                 }
             );
 
-        // success - server has received data
-        setMessage('✅ ' + response.data);
-        setAmount('');
+            // success - server has received data
+            setMessage('✅ ' + response.data);
+            setAmount('');
 
-        // update
-        fetchAccounts();
-        fetchHistory(fromAccount);
+            // update
+            fetchAccounts();
+            fetchHistory(fromAccount);
         
         } catch (error) {
             if (error.response) {
@@ -241,11 +244,25 @@ function Dashboard() {
                     <input 
                         type="number" 
                         step="0.01"
-                        placeholder="Amount (PLN)" 
+                        placeholder="Amount" 
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         required 
                     />
+
+                    {/* --- Currency Selection --- */}
+                    <select 
+                        value={currency} 
+                        onChange={(e) => setCurrency(e.target.value)}
+                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                        <option value="PLN">PLN</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                        <option value="CHF">CHF</option>
+                        <option value="GBP">GBP</option>
+                    </select>
+
                     <button type="submit" style={{ 
                         cursor: 'pointer', 
                         padding: '10px', 
@@ -296,7 +313,7 @@ function Dashboard() {
                                 {isOutgoing ? `To: ${t.receiverAccountNumber}` : `From: ${t.senderAccountNumber}`}
                                 </td>
                                 <td style={{ padding: '8px', textAlign: 'right', fontWeight: 'bold', color: isOutgoing ? '#dc3545' : '#28a745' }}>
-                                {isOutgoing ? `-${t.amount}` : `+${t.amount}`} PLN
+                                {isOutgoing ? `-${t.amount}` : `+${t.amount}`} {t.currency}
                                 </td>
                             </tr>
                             );

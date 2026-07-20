@@ -68,6 +68,7 @@ public class BankAccountController
     public ResponseEntity<String> transferMoney(@RequestBody TransferRequest request)
     {
         AppUser user = getLoggedInUser();
+        String transferCurrency = request.currency();
 
         // we're looking for a sender
         BankAccount senderAccount = accountRepository
@@ -84,20 +85,20 @@ public class BankAccountController
                     .status(HttpStatus.FORBIDDEN)
                     .body("Error: You don't have permission to send money from this account");
 
-        Wallet senderPlnWallet = senderAccount.getWallets().stream()
-                .filter(w -> w.getCurrency().equals("PLN"))
+        Wallet senderWallet = senderAccount.getWallets().stream()
+                .filter(w -> w.getCurrency().equals(transferCurrency))
                 .findFirst()
                 .orElse(null);
 
-        if (senderPlnWallet == null)
+        if (senderWallet == null)
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Error: You don't have a PLN wallet to send money from.");
+                    .body("Error: You don't have a " + transferCurrency + " wallet to send money from.");
 
-        if (senderPlnWallet.getBalance().compareTo(request.amount()) < 0)
+        if (senderWallet.getBalance().compareTo(request.amount()) < 0)
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Error: Too little money in your PLN account");
+                    .body("Error: Too little money");
 
         if (request.amount().compareTo(BigDecimal.ZERO) <= 0)
             return ResponseEntity
@@ -114,20 +115,20 @@ public class BankAccountController
                     .status(HttpStatus.NOT_FOUND)
                     .body("Error: The receiver account doesn't exist");
 
-        Wallet receiverPlnWallet = receiverAccount.getWallets().stream()
-                .filter(w -> w.getCurrency().equals("PLN"))
+        Wallet receiverWallet = receiverAccount.getWallets().stream()
+                .filter(w -> w.getCurrency().equals(transferCurrency))
                 .findFirst()
                 .orElse(null);
 
-        if (receiverPlnWallet == null)
+        if (receiverWallet == null)
         {
-            receiverPlnWallet = new Wallet("PLN", BigDecimal.ZERO, receiverAccount);
-            receiverAccount.getWallets().add(receiverPlnWallet);
+            receiverWallet = new Wallet(transferCurrency, BigDecimal.ZERO, receiverAccount);
+            receiverAccount.getWallets().add(receiverWallet);
         }
 
         // we subtract from the sender and add to the receiver
-        senderPlnWallet.setBalance(senderPlnWallet.getBalance().subtract(request.amount()));
-        receiverPlnWallet.setBalance(receiverPlnWallet.getBalance().add(request.amount()));
+        senderWallet.setBalance(senderWallet.getBalance().subtract(request.amount()));
+        receiverWallet.setBalance(receiverWallet.getBalance().add(request.amount()));
 
         // saving changes to the database
         accountRepository.save(senderAccount);
@@ -138,11 +139,12 @@ public class BankAccountController
                 request.fromAccountNumber(),
                 request.toAccountNumber(),
                 request.amount(),
+                transferCurrency,
                 java.time.LocalDateTime.now()
         );
         transactionRepository.save(transaction);
 
-        return ResponseEntity.ok("Transfer (" + request.amount() + " PLN) has been sent successfully");
+        return ResponseEntity.ok("Transfer (" + request.amount() + " " + transferCurrency + ") has been sent successfully");
     }
 
     // getting the history of transactions (therefore GET)

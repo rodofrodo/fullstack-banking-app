@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import pl.straczek.portfolio_backend.model.AppUser;
 import pl.straczek.portfolio_backend.model.BankAccount;
 import pl.straczek.portfolio_backend.model.Transaction;
@@ -12,8 +13,11 @@ import pl.straczek.portfolio_backend.model.Wallet;
 import pl.straczek.portfolio_backend.repository.AppUserRepository;
 import pl.straczek.portfolio_backend.repository.BankAccountRepository;
 import pl.straczek.portfolio_backend.repository.TransactionRepository;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Random;
 
 @RestController
@@ -170,5 +174,90 @@ public class BankAccountController
     {
         AppUser user = getLoggedInUser();
         return accountRepository.findByOwner(user);
+    }
+
+    // this method helps retrieve an exchange rate
+    private BigDecimal getNbpRate(String currency) throws Exception
+    {
+        if (currency.equals("PLN"))
+            return BigDecimal.ONE;
+
+        RestTemplate restTemplate = new RestTemplate();
+        String nbpUrl = "http://api.nbp.pl/api/exchangerates/rates/a/" + currency + "/?format=json";
+        String response = restTemplate.getForObject(nbpUrl, String.class);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(response);
+        return new BigDecimal(root.path("rates").get(0).path("mid").asString());
+    }
+
+    @PostMapping("/exchange")
+    @Transactional
+    public ResponseEntity<String> exchangeCurrency(@RequestBody ExchangeRequest request)
+    {
+        AppUser user = getLoggedInUser();
+
+        // basic security
+        if (request.sourceCurrency().equals(request.targetCurrency()))
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Error: Source and target currencies must be different");
+
+        if (request.amount().compareTo(BigDecimal.ZERO) <= 0)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Error: Amount must be a number above zero");
+
+        BankAccount account = accountRepository
+                .findByAccountNumber(request.accountNumber())
+                .orElse(null);
+
+        if (account == null || !account.getOwner().getId().equals(user.getId()))
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("Error: Invalid account");
+
+        // we check the source wallet and its balance
+        Wallet sourceWallet = account.getWallets().stream()
+                .filter(w -> w.getCurrency().equals(request.sourceCurrency()))
+                .findFirst().orElse(null);
+
+        if (sourceWallet == null || sourceWallet.getBalance().compareTo(request.amount()) < 0)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Error: Not enough funds in " + request.sourceCurrency() + " wallet");
+
+        try
+        {
+            // getting the exchange rates
+            BigDecimal sourceRate = getNbpRate(request.sourceCurrency());
+            BigDecimal targetRate = getNbpRate(request.targetCurrency());
+
+            // we convert to PLN and then to the target currency
+            BigDecimal valueInPln = request.amount().multiply(sourceRate);
+            BigDecimal convertedAmount = valueInPln.divide(targetRate, 2, RoundingMode.HALF_UP);
+
+            Wallet targetWallet = account.getWallets().stream()
+                    .filter(w -> w.getCurrency().equals(request.targetCurrency()))
+                    .findFirst().orElse(null);
+
+            if (targetWallet == null)
+            {
+                targetWallet = new Wallet(request.targetCurrency(), BigDecimal.ZERO, account);
+                account.getWallets().add(targetWallet);
+            }
+
+            sourceWallet.setBalance(sourceWallet.getBalance().subtract(request.amount()));
+            targetWallet.setBalance(targetWallet.getBalance().add(convertedAmount));
+            accountRepository.save(account);
+
+            return ResponseEntity.ok("Success! Exchanged " + request.amount() + " "
+                    + request.sourceCurrency() + " to " + convertedAmount + " " + request.targetCurrency());
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error: Could not fetch rates from NBP");
+        }
     }
 }

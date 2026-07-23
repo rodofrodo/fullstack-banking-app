@@ -40,6 +40,7 @@ public class SecurityConfig
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // free entry
                         .requestMatchers("/api/users/login").permitAll() // free entry
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // free entry
+                        .requestMatchers("/api/cards/**").authenticated()
                         .anyRequest().authenticated() // everything else - only with a token
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

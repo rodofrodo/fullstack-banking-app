@@ -22,6 +22,9 @@ public class BankAccount
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser owner;
 
+    @OneToOne(mappedBy = "bankAccount", cascade = CascadeType.ALL)
+    private PaymentCard paymentCard;
+
     // empty constructor
     public BankAccount() {}
 
@@ -39,6 +42,7 @@ public class BankAccount
     public String getAccountNumber() { return accountNumber; }
     public List<Wallet> getWallets() { return wallets; }
     public AppUser getOwner() { return owner; }
+    public PaymentCard getPaymentCard() { return paymentCard; }
 
     /*
      * Setters
@@ -46,4 +50,5 @@ public class BankAccount
     public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
     public void setWallets(List<Wallet> wallets) { this.wallets = wallets; }
     public void setOwner(AppUser owner) { this.owner = owner; }
+    public void setPaymentCard(PaymentCard paymentCard) { this.paymentCard = paymentCard; }
 }

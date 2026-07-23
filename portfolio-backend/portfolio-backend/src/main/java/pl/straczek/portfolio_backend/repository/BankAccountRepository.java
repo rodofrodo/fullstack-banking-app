@@ -15,4 +15,5 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Long>
     Optional<BankAccount> findByAccountNumber(String accountNumber);
     // it's going to be "SELECT * FROM bank_account WHERE owner_id = ?"
     List<BankAccount> findByOwner(AppUser owner);
+    List<BankAccount> findAllByOwner(AppUser user);
 }

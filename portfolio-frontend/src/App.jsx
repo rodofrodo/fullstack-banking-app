@@ -9,59 +9,101 @@ import History from './History';
 import Exchange from './Exchange';
 import { Routes, Route, Navigate, useNavigate, Link, NavLink } from 'react-router-dom';
 
+const getRoleFromToken = (token) => {
+    if (!token) return null;
+    try {
+        const payload = token.split('.')[1]; // middle part
+        const decoded = JSON.parse(atob(payload));
+        return decoded.role || 'ROLE_USER';
+    } catch (error) {
+        return null;
+    }
+};
+
 function App() {
-    // checking if we have a token
-    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('jwt_token'));
+    // token in local storage
+    const [token, setToken] = useState(localStorage.getItem('jwt_token'));
     const navigate = useNavigate();
+
+    const isLoggedIn = !!token;
+    const role = getRoleFromToken(token); // the role
 
     const handleLogout = () => {
         localStorage.removeItem('jwt_token'); // getting rid of the token
-        setIsLoggedIn(false); // changing the state to logged-out
+        setToken(null); // changing the state to logged-out
         navigate('/'); // redirecting to the home page
+    };
+
+    const handleLoginSuccess = () => {
+        const newToken = localStorage.getItem('jwt_token');
+        setToken(newToken);
+
+        const newRole = getRoleFromToken(newToken);
+        if (newRole === 'ROLE_ADMIN')
+            navigate('/admin/dashboard');
+        else
+            navigate('/u/dashboard');
     };
 
     return (
         <div>
-            {/* main nav panel */}
-            {isLoggedIn && (
+            {/* ======================================= */}
+            {/*         MENU FOR A REGULAR USER         */}
+            {/* ======================================= */}
+            {isLoggedIn && role !== 'ROLE_ADMIN' && (
                 <div className="nav-container">
                     <div className='nav-logo'>Ancient Bank</div>
                     <div className="nav-buttons-wrapper">
-                        <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-                            Dashboard
-                        </NavLink>
-                        
-                        <NavLink to="/transfer" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-                            Transfer
-                        </NavLink>
-                        
-                        <NavLink to="/history" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-                            History
-                        </NavLink>
-                        
-                        <NavLink to="/exchange" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-                            Exchange
-                        </NavLink>
-                        
-                        <button onClick={handleLogout} className="nav-link logout-btn">
-                            Log Out
-                        </button>
+                        <NavLink to="/u/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Dashboard</NavLink>
+                        <NavLink to="/u/transfer" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Transfer</NavLink>
+                        <NavLink to="/u/history" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>History</NavLink>
+                        <NavLink to="/u/exchange" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Exchange</NavLink> 
+                        <button onClick={handleLogout} className="nav-link logout-btn">Log Out</button>
+                    </div>
+                </div>
+            )}
+
+            {/* ======================================= */}
+            {/*       MENU FOR THE ADMINISTRATOR        */}
+            {/* ======================================= */}
+            {isLoggedIn && role === 'ROLE_ADMIN' && (
+                <div className="nav-container">
+                    <div className='nav-logo'>Ancient Bank</div>
+                    <div className="nav-buttons-wrapper">
+                        {/* specifically for admins */}
+                        <NavLink to="/admin/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Dashboard</NavLink>
+                        <NavLink to="/admin/users" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Users</NavLink>
+                        <button onClick={handleLogout} className="nav-link logout-btn">Log Out</button>
                     </div>
                 </div>
             )}
 
             {/* routing system */}
             <Routes>
-                {/* public routes */}
-                <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Home />} />
-                <Route path="/login" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={() => setIsLoggedIn(true)} />} />
-                <Route path="/register" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register />} />
+                {/* public */}
+                <Route path="/" element={
+                    !isLoggedIn ? <Home /> : (role === 'ROLE_ADMIN' ? <Navigate to="/admin/dashboard" /> : <Navigate to="/u/dashboard" />)
+                } />
+                <Route path="/login" element={!isLoggedIn ? <Login onLoginSuccess={handleLoginSuccess} /> : <Navigate to="/" />} />
+                <Route path="/register" element={!isLoggedIn ? <Register /> : <Navigate to="/" />} />
                 
-                {/* private routes (require login) */}
-                <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />
-                <Route path="/transfer" element={isLoggedIn ? <Transfer /> : <Navigate to="/" />} />
-                <Route path="/history" element={isLoggedIn ? <History /> : <Navigate to="/" />} />
-                <Route path="/exchange" element={isLoggedIn ? <Exchange /> : <Navigate to="/" />} />
+                {/* user */}
+                <Route path="/u/dashboard" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <Dashboard /> : <Navigate to="/" />} />
+                <Route path="/u/transfer" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <Transfer /> : <Navigate to="/" />} />
+                <Route path="/u/history" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <History /> : <Navigate to="/" />} />
+                <Route path="/u/exchange" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <Exchange /> : <Navigate to="/" />} />
+
+                {/* admin */}
+                <Route path="/admin/dashboard" element={
+                    isLoggedIn && role === 'ROLE_ADMIN' 
+                    ? <div style={{textAlign: 'center', marginTop: '50px'}}><h2>Treasury</h2></div> 
+                    : <Navigate to="/" />
+                } />
+                <Route path="/admin/users" element={
+                    isLoggedIn && role === 'ROLE_ADMIN' 
+                    ? <div style={{textAlign: 'center', marginTop: '50px'}}><h2>List of clients</h2></div> 
+                    : <Navigate to="/" />
+                } />
             </Routes>
         </div>
     );

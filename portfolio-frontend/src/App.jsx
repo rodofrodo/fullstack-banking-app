@@ -7,7 +7,7 @@ import Register from './Register';
 import Transfer from './Transfer';
 import History from './History';
 import Exchange from './Exchange';
-import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, Link, NavLink } from 'react-router-dom';
 
 function App() {
     // checking if we have a token
@@ -15,96 +15,56 @@ function App() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-		localStorage.removeItem('jwt_token'); // getting rid of the token
-		setIsLoggedIn(false); // changing the state to logged-out
-		navigate('/'); // redirecting to the home page
+        localStorage.removeItem('jwt_token'); // getting rid of the token
+        setIsLoggedIn(false); // changing the state to logged-out
+        navigate('/'); // redirecting to the home page
     };
 
     return (
-        <Routes>
-            <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Home />} />
-            <Route path="/login" element={isLoggedIn
-                ? <Navigate to="/dashboard" />
-                : <Login onLoginSuccess={() => setIsLoggedIn(true)} />} />
-            <Route path="/register" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register />} />
-            
-            {/* DASHBOARD */}
-            <Route path="/dashboard" element={
-                isLoggedIn ? (
-                    <div style={{ textAlign: 'center', fontFamily: 'sans-serif', padding: '20px' }}>
-                        <h1>🏛️ Ancient Bank</h1>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
-                            <Link to="/dashboard"><button style={{ padding: '8px' }}>💳 Dashboard</button></Link>
-                            <Link to="/transfer"><button style={{ padding: '8px' }}>💸 Transfer</button></Link>
-                            <Link to="/history"><button style={{ padding: '8px' }}>🏛️ History</button></Link>
-                            <Link to="/exchange"><button style={{ padding: '8px' }}>💱 Exchange</button></Link>
-                            <button onClick={handleLogout} style={{ padding: '8px', cursor: 'pointer', backgroundColor: '#333', color: 'white', border: 'none', borderRadius: '5px' }}>
-                                Log Out
-                            </button>
-                        </div>
-                        <Dashboard />
+        <div>
+            {/* main nav panel */}
+            {isLoggedIn && (
+                <div className="nav-container">
+                    <div className='nav-logo'>Ancient Bank</div>
+                    <div className="nav-buttons-wrapper">
+                        <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                            Dashboard
+                        </NavLink>
+                        
+                        <NavLink to="/transfer" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                            Transfer
+                        </NavLink>
+                        
+                        <NavLink to="/history" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                            History
+                        </NavLink>
+                        
+                        <NavLink to="/exchange" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                            Exchange
+                        </NavLink>
+                        
+                        <button onClick={handleLogout} className="nav-link logout-btn">
+                            Log Out
+                        </button>
                     </div>
-                ) : <Navigate to="/" />
-            } />
+                </div>
+            )}
 
-            {/* TRANSFER */}
-            <Route path="/transfer" element={
-                isLoggedIn ? (
-                    <div style={{ textAlign: 'center', fontFamily: 'sans-serif', padding: '20px' }}>
-                        <h1>🏛️ Ancient Bank</h1>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
-                            <Link to="/dashboard"><button style={{ padding: '8px' }}>💳 Dashboard</button></Link>
-                            <Link to="/transfer"><button style={{ padding: '8px' }}>💸 Transfer</button></Link>
-                            <Link to="/history"><button style={{ padding: '8px' }}>🏛️ History</button></Link>
-                            <Link to="/exchange"><button style={{ padding: '8px' }}>💱 Exchange</button></Link>
-                            <button onClick={handleLogout} style={{ padding: '8px', cursor: 'pointer', backgroundColor: '#333', color: 'white', border: 'none', borderRadius: '5px' }}>
-                                Log Out
-                            </button>
-                        </div>
-                        <Transfer />
-                    </div>
-                ) : <Navigate to="/" />
-            } />
-
-            {/* HISTORY */}
-            <Route path="/history" element={
-                isLoggedIn ? (
-                    <div style={{ textAlign: 'center', fontFamily: 'sans-serif', padding: '20px' }}>
-                        <h1>🏛️ Ancient Bank</h1>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
-                            <Link to="/dashboard"><button style={{ padding: '8px' }}>💳 Dashboard</button></Link>
-                            <Link to="/transfer"><button style={{ padding: '8px' }}>💸 Transfer</button></Link>
-                            <Link to="/history"><button style={{ padding: '8px' }}>🏛️ History</button></Link>
-                            <Link to="/exchange"><button style={{ padding: '8px' }}>💱 Exchange</button></Link>
-                            <button onClick={handleLogout} style={{ padding: '8px', cursor: 'pointer', backgroundColor: '#333', color: 'white', border: 'none', borderRadius: '5px' }}>
-                                Log Out
-                            </button>
-                        </div>
-                        <History />
-                    </div>
-                ) : <Navigate to="/" />
-            } />
-
-            {/* EXCHANGE */}
-            <Route path="/exchange" element={
-                isLoggedIn ? (
-                    <div style={{ textAlign: 'center', fontFamily: 'sans-serif', padding: '20px' }}>
-                        <h1>🏛️ Ancient Bank</h1>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
-                            <Link to="/dashboard"><button style={{ padding: '8px' }}>💳 Dashboard</button></Link>
-                            <Link to="/transfer"><button style={{ padding: '8px' }}>💸 Transfer</button></Link>
-                            <Link to="/history"><button style={{ padding: '8px' }}>🏛️ History</button></Link>
-                            <Link to="/exchange"><button style={{ padding: '8px' }}>💱 Exchange</button></Link>
-                            <button onClick={handleLogout} style={{ padding: '8px', cursor: 'pointer', backgroundColor: '#333', color: 'white', border: 'none', borderRadius: '5px' }}>
-                                Log Out
-                            </button>
-                        </div>
-                        <Exchange />
-                    </div>
-                ) : <Navigate to="/" />
-            } />
-        </Routes>
+            {/* routing system */}
+            <Routes>
+                {/* public routes */}
+                <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Home />} />
+                <Route path="/login" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={() => setIsLoggedIn(true)} />} />
+                <Route path="/register" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register />} />
+                
+                {/* private routes (require login) */}
+                <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />
+                <Route path="/transfer" element={isLoggedIn ? <Transfer /> : <Navigate to="/" />} />
+                <Route path="/history" element={isLoggedIn ? <History /> : <Navigate to="/" />} />
+                <Route path="/exchange" element={isLoggedIn ? <Exchange /> : <Navigate to="/" />} />
+            </Routes>
+        </div>
     );
 }
 
-export default App
+export default App;

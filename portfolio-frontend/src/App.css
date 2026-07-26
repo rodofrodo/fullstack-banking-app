@@ -1,0 +1,59 @@
+/* Styles for App.css */
+
+.nav-container {
+    text-align: center;
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 25px 20px 0 20px;
+    background-color: #fff;
+    margin-bottom: 30px;
+    /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);*/
+}
+
+.nav-logo {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    font-weight: 800;
+    font-size: 20px;
+    color: #000000;
+    letter-spacing: -0.5px;
+}
+
+.nav-buttons-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    padding-top: 50px;
+}
+
+/* normal link */
+.nav-link {
+    text-decoration: none;
+    color: #000000;
+    font-weight: 700;
+    font-size: 16px;
+    padding-bottom: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    border-bottom: 3px solid transparent; /* idk */
+    transition: color 0.2s ease-in-out;
+}
+
+/* active link */
+.nav-link.active {
+    color: #0066ff;
+    border-bottom: 3px solid #0066ff; /* idk */
+}
+
+/* hover */
+.nav-link:hover:not(.active) {
+    color: #555555;
+}
+
+/* exception */
+.logout-btn:hover {
+    color: #dc3545 !important;
+}

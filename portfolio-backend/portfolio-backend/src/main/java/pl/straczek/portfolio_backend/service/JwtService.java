@@ -19,6 +19,7 @@ public class JwtService
         return JWT.create()
                 .withSubject(user.getEmail()) // main identifier (email)
                 .withClaim("username", user.getUsername()) // additional data
+                .withClaim("role", user.getRole()) // admin or user
                 .withIssuedAt(new Date()) // issue date
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
                 .sign(algorithm); // signature with a secret key

@@ -7,6 +7,7 @@ import Register from './Register';
 import Transfer from './Transfer';
 import History from './History';
 import Exchange from './Exchange';
+import AdminDashboard from './AdminDashboard';
 import { Routes, Route, Navigate, useNavigate, Link, NavLink } from 'react-router-dom';
 
 const getRoleFromToken = (token) => {
@@ -94,11 +95,7 @@ function App() {
                 <Route path="/u/exchange" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <Exchange /> : <Navigate to="/" />} />
 
                 {/* admin */}
-                <Route path="/admin/dashboard" element={
-                    isLoggedIn && role === 'ROLE_ADMIN' 
-                    ? <div style={{textAlign: 'center', marginTop: '50px'}}><h2>Treasury</h2></div> 
-                    : <Navigate to="/" />
-                } />
+                <Route path="/admin/dashboard" element={isLoggedIn && role === 'ROLE_ADMIN' ? <AdminDashboard /> : <Navigate to="/" />} />
                 <Route path="/admin/users" element={
                     isLoggedIn && role === 'ROLE_ADMIN' 
                     ? <div style={{textAlign: 'center', marginTop: '50px'}}><h2>List of clients</h2></div> 

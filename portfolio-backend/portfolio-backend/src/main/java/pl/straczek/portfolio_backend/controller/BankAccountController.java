@@ -236,6 +236,13 @@ public class BankAccountController
             BigDecimal valueInPln = request.amount().multiply(sourceRate);
             BigDecimal convertedAmount = valueInPln.divide(targetRate, 2, RoundingMode.HALF_UP);
 
+            // ====
+            // BANK FEE LOGIC
+            // ====
+            BigDecimal feePercentage = new BigDecimal("0.02");
+            BigDecimal bankFee = convertedAmount.multiply(feePercentage).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal finalAmountForUser = convertedAmount.subtract(bankFee);
+
             Wallet targetWallet = account.getWallets().stream()
                     .filter(w -> w.getCurrency().equals(request.targetCurrency()))
                     .findFirst().orElse(null);
@@ -247,17 +254,42 @@ public class BankAccountController
             }
 
             sourceWallet.setBalance(sourceWallet.getBalance().subtract(request.amount()));
-            targetWallet.setBalance(targetWallet.getBalance().add(convertedAmount));
+            targetWallet.setBalance(targetWallet.getBalance().add(finalAmountForUser));
             accountRepository.save(account);
 
+            // ====
+            // DEPOSITING THE FEE INTO THE VAULT
+            // ====
+            String vaultAccountNumber = "PL99999999999999999999999999";
+            BankAccount vaultAccount = accountRepository.findByAccountNumber(vaultAccountNumber).orElse(null);
+
+            if (vaultAccount != null)
+            {
+                Wallet vaultTargetWallet = vaultAccount.getWallets().stream()
+                        .filter(w -> w.getCurrency().equals(request.targetCurrency()))
+                        .findFirst().orElse(null);
+
+                if (vaultTargetWallet == null)
+                {
+                    // if the vault doesn't have a specific wallet, we create it
+                    vaultTargetWallet = new Wallet(request.targetCurrency(), BigDecimal.ZERO, vaultAccount);
+                    vaultAccount.getWallets().add(vaultTargetWallet);
+                }
+
+                // profit
+                vaultTargetWallet.setBalance(vaultTargetWallet.getBalance().add(bankFee));
+                accountRepository.save(vaultAccount);
+            }
+
             return ResponseEntity.ok("Success! Exchanged " + request.amount() + " "
-                    + request.sourceCurrency() + " to " + convertedAmount + " " + request.targetCurrency());
+                    + request.sourceCurrency() + " to " + finalAmountForUser + " " + request.targetCurrency()
+                    + " (Bank fee: " + bankFee + " " + request.targetCurrency() + ")");
         }
         catch (Exception e)
         {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error: Could not fetch rates from NBP");
+                    .body("Error: Could not fetch rates from NBP or process transaction");
         }
     }
 }

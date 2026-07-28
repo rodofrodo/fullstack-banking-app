@@ -85,6 +85,21 @@ function Dashboard() {
 
     const hasAnyCard = accounts.some(acc => acc.paymentCard != null);
 
+    // formatting the bank account number
+    const formatAccountNumber = (accountNumber) => {
+        if (!accountNumber) return '';
+
+        // making sure there's no whitespace
+        const cleanNumber = accountNumber.replace(/\s/g, '');
+        if (cleanNumber.length === 28 && cleanNumber.startsWith('PL'))
+            return `${cleanNumber.slice(0, 2)} ${cleanNumber.slice(2, 4)} ${cleanNumber.slice(4, 8)} ` +
+                    `${cleanNumber.slice(8, 12)} ${cleanNumber.slice(12, 16)} ${cleanNumber.slice(16, 20)} ` +
+                    `${cleanNumber.slice(20, 24)} ${cleanNumber.slice(24, 28)}`;
+        
+        // else: return default
+        return accountNumber;
+    };
+
     return (
         <div style={{ maxWidth: '650px', margin: '20px auto', fontFamily: 'sans-serif' }}>
             <div style={{ border: '1px solid #ffc107', padding: '25px', borderRadius: '8px', backgroundColor: '#fffdf6', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
@@ -98,7 +113,7 @@ function Dashboard() {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
                                     <div style={{ textAlign: 'left', flex: '1' }}>
                                         <span style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account number</span>
-                                        <strong style={{ fontSize: '15px', color: '#333' }}>{acc.accountNumber}</strong>
+                                        <strong style={{ fontSize: '15px', color: '#333' }}>{formatAccountNumber(acc.accountNumber)}</strong>
                                     </div>
                                     <div style={{ textAlign: 'right', flex: '1' }}>
                                         <span style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '5px' }}>Balances</span>

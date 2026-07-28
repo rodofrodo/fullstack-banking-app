@@ -54,7 +54,7 @@ function History() {
     };
 
     return (
-        <div>
+        <div style={{ maxWidth: '850px', margin: '20px auto', fontFamily: 'sans-serif' }}>
             <div style={{ border: '1px solid #28a745', borderRadius: '8px', padding: '20px', marginTop: '20px', backgroundColor: '#f9fff9' }}>
                 <h3 style={{ color: '#28a745', marginTop: 0 }}>📋 History of transactions for this account</h3>
                 

@@ -55,7 +55,7 @@ function Transfer() {
     };
 
     return (
-        <div>
+        <div style={{ maxWidth: '850px', margin: '20px auto', fontFamily: 'sans-serif' }}>
             <div style={{ border: '1px solid #007bff', borderRadius: '8px', padding: '20px', marginTop: '20px', backgroundColor: '#f8fbff' }}>
                 <h2 style={{ color: '#007bff', marginTop: 0, textAlign: 'center' }}>Transfer Dashboard</h2>
                 <form onSubmit={handleTransfer} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>              

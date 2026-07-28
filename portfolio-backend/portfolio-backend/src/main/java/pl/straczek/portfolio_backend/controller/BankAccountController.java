@@ -56,7 +56,11 @@ public class BankAccountController
         AppUser user = getLoggedInUser();
 
         // generating random 26-digit bank account number
-        String accountNumber = "PL" + (100000000000000000L + (long)(new Random().nextDouble() * 900000000000000000L));
+        StringBuilder sb = new StringBuilder("PL");
+        Random random = new Random();
+        for (int i = 0; i < 26; i++)
+            sb.append(random.nextInt(10));
+        String accountNumber = sb.toString();
 
         BankAccount account = new BankAccount(accountNumber, user);
         Wallet defaultPlnWallet = new Wallet("PLN", new BigDecimal("100.00"), account);

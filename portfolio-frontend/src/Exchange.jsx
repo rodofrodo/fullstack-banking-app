@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CurrencyWidget from './CurrencyWidget';
+import { formatAccountNumber } from './global/utils';
 
 function Exchange() {
     const [accounts, setAccounts] = useState([]);
@@ -53,6 +54,19 @@ function Exchange() {
             <div style={{ border: '2px solid #ffc107', borderRadius: '8px', padding: '25px', marginTop: '20px', backgroundColor: '#fffdf6', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
                 <h2 style={{ color: '#d39e00', marginTop: 0, textAlign: 'center', marginBottom: '25px' }}>💱 Currency Exchange</h2>
                 
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center'
+                }}>
+                    <h3 style={{
+                        fontSize: '14px', 
+                        color: '#363636', 
+                        margin: '0 auto'
+                    }}>
+                        Note: The current bank fee is 2%, and PLN is used as the base currency for all currency conversions.
+                    </h3>
+                </div>
+
                 <CurrencyWidget />
 
                 <form onSubmit={handleExchange} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
@@ -68,7 +82,7 @@ function Exchange() {
                             <option value="" disabled>Choose account...</option>
                             {accounts.map(acc => (
                                 <option key={acc.id} value={acc.accountNumber}>
-                                    {acc.accountNumber}
+                                    {formatAccountNumber(acc.accountNumber)}
                                 </option>
                             ))}
                         </select>

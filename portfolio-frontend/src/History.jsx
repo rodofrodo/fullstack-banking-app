@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { formatAccountNumber } from './global/utils';
 
 function History() {
     // vars
@@ -67,7 +68,7 @@ function History() {
                     <option value="" disabled>Select account to view history...</option>
                     {accounts.map(acc => (
                         <option key={acc.id} value={acc.accountNumber}>
-                            {acc.accountNumber}
+                            {formatAccountNumber(acc.accountNumber)}
                         </option>
                     ))}
                 </select>
@@ -92,7 +93,9 @@ function History() {
                                             {isOutgoing ? 'OUTGOING' : 'INCOMING'}
                                         </td>
                                         <td style={{ padding: '8px', fontSize: '14px', color: '#555' }}>
-                                            {isOutgoing ? `To: ${t.receiverAccountNumber}` : `From: ${t.senderAccountNumber}`}
+                                            {isOutgoing 
+                                            ? `To: ${formatAccountNumber(t.receiverAccountNumber)}` 
+                                            : `From: ${formatAccountNumber(t.senderAccountNumber)}`}
                                         </td>
                                         <td style={{ padding: '8px', textAlign: 'right', fontWeight: 'bold', color: isOutgoing ? '#dc3545' : '#28a745' }}>
                                             {isOutgoing ? `-${t.amount}` : `+${t.amount}`} {t.currency}

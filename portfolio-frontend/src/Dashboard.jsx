@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { formatAccountNumber } from './global/utils';
 
 function Dashboard() {
     const [accountMessage, setAccountMessage] = useState('');
@@ -84,21 +85,6 @@ function Dashboard() {
     };
 
     const hasAnyCard = accounts.some(acc => acc.paymentCard != null);
-
-    // formatting the bank account number
-    const formatAccountNumber = (accountNumber) => {
-        if (!accountNumber) return '';
-
-        // making sure there's no whitespace
-        const cleanNumber = accountNumber.replace(/\s/g, '');
-        if (cleanNumber.length === 28 && cleanNumber.startsWith('PL'))
-            return `${cleanNumber.slice(0, 2)} ${cleanNumber.slice(2, 4)} ${cleanNumber.slice(4, 8)} ` +
-                    `${cleanNumber.slice(8, 12)} ${cleanNumber.slice(12, 16)} ${cleanNumber.slice(16, 20)} ` +
-                    `${cleanNumber.slice(20, 24)} ${cleanNumber.slice(24, 28)}`;
-        
-        // else: return default
-        return accountNumber;
-    };
 
     return (
         <div style={{ maxWidth: '650px', margin: '20px auto', fontFamily: 'sans-serif' }}>

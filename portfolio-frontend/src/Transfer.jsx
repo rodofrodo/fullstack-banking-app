@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { formatAccountNumber } from './global/utils';
 
 function Transfer() {
     // transfer form states
@@ -35,7 +36,7 @@ function Transfer() {
             const token = localStorage.getItem('jwt_token');
             const response = await axios.post('http://localhost:8080/api/accounts/transfer', {
                 fromAccountNumber: fromAccount,
-                toAccountNumber: toAccount,
+                toAccountNumber: toAccount.replace(/\s/g, ''), // IMPORTANT
                 amount: amount,
                 currency: currency
             }, {
@@ -69,7 +70,7 @@ function Transfer() {
                         <option value="" disabled>Select your account to send from...</option>
                         {accounts.map(acc => (
                             <option key={acc.id} value={acc.accountNumber}>
-                                {acc.accountNumber}
+                                {formatAccountNumber(acc.accountNumber)}
                             </option>
                         ))}
                     </select>
@@ -78,7 +79,10 @@ function Transfer() {
                         type="text" 
                         placeholder="To (receiver's bank account number)" 
                         value={toAccount} 
-                        onChange={(e) => setToAccount(e.target.value)} 
+                        onChange={(e) => {
+                            const formatted = formatAccountNumber(e.target.value);
+                            setToAccount(formatted);
+                        }} 
                         required
                     />
                     

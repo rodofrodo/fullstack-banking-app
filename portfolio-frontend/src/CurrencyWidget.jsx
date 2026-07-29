@@ -55,7 +55,7 @@ function CurrencyWidget() {
                         <div style={{ fontSize: '18px', fontWeight: '700', color: '#0066ff' }}>
                             {rate.code}
                         </div>
-                        <div style={{ fontSize: '15px', color: '#666666', marginTop: '4px' }}>
+                        <div style={{ fontSize: '15px', color: '#666666', marginTop: '4px', marginBottom: '4px' }}>
                             {rate.mid.toFixed(2)} PLN
                         </div>
                     </div>

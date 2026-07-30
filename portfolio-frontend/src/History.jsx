@@ -85,20 +85,35 @@ function History() {
                         </thead>
                         <tbody>
                             {transactions.map((t) => {
-                                const isOutgoing = t.senderAccountNumber === searchAccount;
+                                const isExchange = t.senderAccountNumber === t.receiverAccountNumber;
+                                const isSender = t.senderAccountNumber === searchAccount;
+
+                                let type, sign, color, details;
+                                
+                                if (isExchange) {
+                                    type = 'EXCHANGE';
+                                    sign = '';
+                                    color = '#17a2b8';
+                                    details = 'Currency conversion';
+                                } else if (isSender) {
+                                    type = 'OUTGOING';
+                                    sign = '-';
+                                    color = '#dc3545';
+                                    details = `To: ${formatAccountNumber(t.receiverAccountNumber)}`;
+                                } else {
+                                    type = 'INCOMING';
+                                    sign = '+';
+                                    color = '#28a745';
+                                    details = `From: ${formatAccountNumber(t.senderAccountNumber)}`;
+                                }
+
                                 return (
                                     <tr key={t.id} style={{ borderBottom: '1px solid #ddd' }}>
                                         <td style={{ padding: '8px', fontSize: '14px' }}>{formatDate(t.timestamp)}</td>
-                                        <td style={{ padding: '8px', fontWeight: 'bold', color: isOutgoing ? '#dc3545' : '#28a745' }}>
-                                            {isOutgoing ? 'OUTGOING' : 'INCOMING'}
-                                        </td>
-                                        <td style={{ padding: '8px', fontSize: '14px', color: '#555' }}>
-                                            {isOutgoing 
-                                            ? `To: ${formatAccountNumber(t.receiverAccountNumber)}` 
-                                            : `From: ${formatAccountNumber(t.senderAccountNumber)}`}
-                                        </td>
-                                        <td style={{ padding: '8px', textAlign: 'right', fontWeight: 'bold', color: isOutgoing ? '#dc3545' : '#28a745' }}>
-                                            {isOutgoing ? `-${formatBalance(t.amount)}` : `+${formatBalance(t.amount)}`} {t.currency}
+                                        <td style={{ padding: '8px', fontWeight: 'bold', color: color }}>{type}</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#555' }}>{details}</td>
+                                        <td style={{ padding: '8px', textAlign: 'right', fontWeight: 'bold', color: color }}>
+                                            {sign}{formatBalance(t.amount)} {t.currency}
                                         </td>
                                     </tr>
                                 );

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { formatAccountNumber } from './global/utils';
+import { formatAccountNumber, formatBalance } from './global/utils';
 
 function Dashboard() {
     const [accountMessage, setAccountMessage] = useState('');
@@ -106,7 +106,7 @@ function Dashboard() {
                                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                                             {acc.wallets && acc.wallets.map(wallet => (
                                                 <span key={wallet.currency} style={{ backgroundColor: '#e9f7ef', color: '#28a745', border: '1px solid #c3e6cb', padding: '4px 8px', borderRadius: '6px', fontSize: '13px', fontWeight: 'bold' }}>
-                                                    {wallet.balance} {wallet.currency}
+                                                    {formatBalance(wallet.balance)} {wallet.currency}
                                                 </span>
                                             ))}
                                         </div>

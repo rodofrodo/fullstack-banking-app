@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { formatAccountNumber } from './global/utils';
+import { formatAccountNumber, formatBalance } from './global/utils';
 
 function History() {
     // vars
@@ -98,7 +98,7 @@ function History() {
                                             : `From: ${formatAccountNumber(t.senderAccountNumber)}`}
                                         </td>
                                         <td style={{ padding: '8px', textAlign: 'right', fontWeight: 'bold', color: isOutgoing ? '#dc3545' : '#28a745' }}>
-                                            {isOutgoing ? `-${t.amount}` : `+${t.amount}`} {t.currency}
+                                            {isOutgoing ? `-${formatBalance(t.amount)}` : `+${formatBalance(t.amount)}`} {t.currency}
                                         </td>
                                     </tr>
                                 );

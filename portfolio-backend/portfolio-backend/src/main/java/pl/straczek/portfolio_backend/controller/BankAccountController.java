@@ -285,6 +285,26 @@ public class BankAccountController
                 accountRepository.save(vaultAccount);
             }
 
+            // exchange log
+            Transaction exchangeTx = new Transaction(
+                    request.accountNumber(),
+                    request.accountNumber(),
+                    finalAmountForUser,
+                    request.targetCurrency(),
+                    java.time.LocalDateTime.now()
+            );
+            transactionRepository.save(exchangeTx);
+
+            // fee log
+            Transaction feeTx = new Transaction(
+                    request.accountNumber(),
+                    vaultAccountNumber,
+                    bankFee,
+                    request.targetCurrency(),
+                    java.time.LocalDateTime.now()
+            );
+            transactionRepository.save(feeTx);
+
             return ResponseEntity.ok("Success! Exchanged " + request.amount() + " "
                     + request.sourceCurrency() + " to " + finalAmountForUser + " " + request.targetCurrency()
                     + " (Bank fee: " + bankFee + " " + request.targetCurrency() + ")");

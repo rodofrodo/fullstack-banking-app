@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { formatAccountNumber, formatBalance } from './global/utils';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
     const [accountMessage, setAccountMessage] = useState('');
     const [accounts, setAccounts] = useState([]);
+    const navigate = useNavigate();
 
     const fetchAccounts = async () => {
         const token = localStorage.getItem('jwt_token');
@@ -159,7 +161,7 @@ function Dashboard() {
                 )}
 
                 <button 
-                    onClick={handleCreateAccount} 
+                    onClick={() => navigate('/u/create-account')} 
                     style={{ cursor: 'pointer', padding: '12px', backgroundColor: '#ffc107', color: '#333', border: 'none', borderRadius: '5px', fontWeight: 'bold', width: '100%', fontSize: '15px' }}
                 >
                     ➕ Open new bank account

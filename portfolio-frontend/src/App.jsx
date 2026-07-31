@@ -8,7 +8,8 @@ import Transfer from './Transfer';
 import History from './History';
 import Exchange from './Exchange';
 import AdminDashboard from './AdminDashboard';
-import { Routes, Route, Navigate, useNavigate, Link, NavLink } from 'react-router-dom';
+import CreateAccount from './CreateAccount';
+import { Routes, Route, Navigate, useNavigate, Link, NavLink, useLocation } from 'react-router-dom';
 
 const getRoleFromToken = (token) => {
     if (!token) return null;
@@ -25,6 +26,7 @@ function App() {
     // token in local storage
     const [token, setToken] = useState(localStorage.getItem('jwt_token'));
     const navigate = useNavigate();
+    const location = useLocation();
 
     const isLoggedIn = !!token;
     const role = getRoleFromToken(token); // the role
@@ -51,7 +53,7 @@ function App() {
             {/* ======================================= */}
             {/*         MENU FOR A REGULAR USER         */}
             {/* ======================================= */}
-            {isLoggedIn && role !== 'ROLE_ADMIN' && (
+            {isLoggedIn && role !== 'ROLE_ADMIN' && location.pathname !== '/u/create-account' && (
                 <div className="nav-container">
                     <div className='nav-logo'>Ancient Bank</div>
                     <div className="nav-buttons-wrapper">
@@ -93,6 +95,9 @@ function App() {
                 <Route path="/u/transfer" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <Transfer /> : <Navigate to="/" />} />
                 <Route path="/u/history" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <History /> : <Navigate to="/" />} />
                 <Route path="/u/exchange" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <Exchange /> : <Navigate to="/" />} />
+
+                {/* sub routes */}
+                <Route path="/u/create-account" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <CreateAccount /> : <Navigate to="/" />} />
 
                 {/* admin */}
                 <Route path="/admin/dashboard" element={isLoggedIn && role === 'ROLE_ADMIN' ? <AdminDashboard /> : <Navigate to="/" />} />

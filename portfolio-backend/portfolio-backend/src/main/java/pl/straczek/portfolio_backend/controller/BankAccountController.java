@@ -51,7 +51,7 @@ public class BankAccountController
 
     // opening an account (you get 100 PLN to start)
     @PostMapping("/create")
-    public String createAccount()
+    public String createAccount(@RequestBody CreateAccountRequest request)
     {
         AppUser user = getLoggedInUser();
 
@@ -63,11 +63,15 @@ public class BankAccountController
         String accountNumber = sb.toString();
 
         BankAccount account = new BankAccount(accountNumber, user);
-        Wallet defaultPlnWallet = new Wallet("PLN", new BigDecimal("100.00"), account);
+        account.setAccountType(request.accountType());
+        account.setMultiCurrency(request.isMultiCurrency());
+
+        Wallet defaultPlnWallet = new Wallet(request.baseCurrency(), new BigDecimal("100.00"), account);
         account.getWallets().add(defaultPlnWallet);
         accountRepository.save(account);
 
-        return "Created an account for " + user.getUsername() + ". Account number: " + accountNumber + " | Balance: 100 PLN";
+        return "Created an account for " + user.getUsername() + ". Account number: " + accountNumber
+                + " | Base currency: " + request.baseCurrency();
     }
 
     // transferring money

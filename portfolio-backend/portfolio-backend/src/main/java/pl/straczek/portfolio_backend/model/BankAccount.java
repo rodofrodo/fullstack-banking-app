@@ -25,6 +25,9 @@ public class BankAccount
     @OneToOne(mappedBy = "bankAccount", cascade = CascadeType.ALL)
     private PaymentCard paymentCard;
 
+    private String accountType;
+    private Boolean isMultiCurrency;
+
     // empty constructor
     public BankAccount() {}
 
@@ -43,6 +46,8 @@ public class BankAccount
     public List<Wallet> getWallets() { return wallets; }
     public AppUser getOwner() { return owner; }
     public PaymentCard getPaymentCard() { return paymentCard; }
+    public String getAccountType() { return accountType; }
+    public Boolean isMultiCurrency() { return isMultiCurrency; }
 
     /*
      * Setters
@@ -51,4 +56,6 @@ public class BankAccount
     public void setWallets(List<Wallet> wallets) { this.wallets = wallets; }
     public void setOwner(AppUser owner) { this.owner = owner; }
     public void setPaymentCard(PaymentCard paymentCard) { this.paymentCard = paymentCard; }
+    public void setAccountType(String accountType) { this.accountType = accountType; }
+    public void setMultiCurrency(boolean isMultiCurrency) { this.isMultiCurrency = isMultiCurrency; }
 }

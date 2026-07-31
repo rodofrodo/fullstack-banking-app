@@ -33,9 +33,16 @@ function Dashboard() {
         }
 
         try {
+            // for tests
+            const payload = {
+                accountType: 'PERSONAL',
+                isMultiCurrency: true,
+                baseCurrency: 'PLN'
+            };
+
             const response = await axios.post(
                 'http://localhost:8080/api/accounts/create',
-                {},
+                payload,
                 { headers: { Authorization: 'Bearer ' + token } }
             );
             setAccountMessage('✅ ' + response.data);

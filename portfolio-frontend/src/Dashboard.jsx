@@ -95,6 +95,17 @@ function Dashboard() {
 
     const hasAnyCard = accounts.some(acc => acc.paymentCard != null);
 
+    const getAccountTypeName = (type) => {
+        switch (type) {
+            case 'PERSONAL': return 'Personal Account';
+            case 'BUSINESS': return 'Business Account';
+            case 'POCKET': return 'Pocket Account';
+            case 'SAVINGS': return 'Savings Account';
+            case 'BONDS': return 'Bonds Account';
+            default: return 'Standard Account';
+        };
+    };
+
     return (
         <div style={{ maxWidth: '650px', margin: '20px auto', fontFamily: 'sans-serif' }}>
             <div style={{ border: '1px solid #ffc107', padding: '25px', borderRadius: '8px', backgroundColor: '#fffdf6', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
@@ -105,9 +116,36 @@ function Dashboard() {
                         {accounts.map(acc => (
                             <div key={acc.id} style={{ padding: '20px', border: '2px solid #ffeeba', borderRadius: '8px', backgroundColor: '#fff', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                                 
+                                <div style={{ marginBottom: '10px', display: 'flex', gap: '10px' }}>
+                                    <span style={{ 
+                                        backgroundColor: '#004085', 
+                                        color: 'white', 
+                                        padding: '4px 10px', 
+                                        borderRadius: '12px', 
+                                        fontSize: '12px', 
+                                        fontWeight: 'bold' 
+                                    }}>
+                                        {getAccountTypeName(acc.accountType)}
+                                    </span>
+                                    
+                                    {/* if the account is multi-currency, we show an additional yellow label */}
+                                    {acc.multiCurrency && (
+                                        <span style={{ 
+                                            backgroundColor: '#ffc107', 
+                                            color: '#000', 
+                                            padding: '4px 10px', 
+                                            borderRadius: '12px', 
+                                            fontSize: '12px', 
+                                            fontWeight: 'bold' 
+                                        }}>
+                                            Multi-Currency
+                                        </span>
+                                    )}
+                                </div>
+
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
                                     <div style={{ textAlign: 'left', flex: '1' }}>
-                                        <span style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account number</span>
+                                        <span style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '5px' }}>Account number</span>
                                         <strong style={{ fontSize: '15px', color: '#333' }}>{formatAccountNumber(acc.accountNumber)}</strong>
                                     </div>
                                     <div style={{ textAlign: 'right', flex: '1' }}>

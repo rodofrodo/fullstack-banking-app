@@ -12,6 +12,7 @@ import pl.straczek.portfolio_backend.repository.PaymentCardRepository;
 import pl.straczek.portfolio_backend.repository.AppUserRepository;
 import pl.straczek.portfolio_backend.service.CardGeneratorService;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,8 @@ public class PaymentCardController
         {
             // account number from the map
             String requestedAccountNumber = request.get("accountNumber");
+            String pin = request.get("pin");
+            String dailyLimitStr = request.get("dailyLimit");
 
             // we check who's logged in
             AppUser user = userRepository.findByEmail(principal.getName()).orElse(null);
@@ -57,6 +60,14 @@ public class PaymentCardController
                 return ResponseEntity
                         .status(HttpStatus.FORBIDDEN)
                         .body("Error: Invalid account");
+
+            // checking if the card is going to be assigned to a personal or a business account
+            if (targetAccount.getAccountType() != null &&
+                (!targetAccount.getAccountType().equals("PERSONAL") &&
+                !targetAccount.getAccountType().equals("BUSINESS")))
+                return ResponseEntity
+                        .badRequest()
+                        .body("Error: Cards can only be issued for Personal or Business accounts.");
 
             // checking if any account has a card assigned
             List<BankAccount> userAccounts = accountRepository.findAllByOwner(user);
@@ -75,6 +86,10 @@ public class PaymentCardController
             // saving the card and assigning it to the target account
             PaymentCard newCard = new PaymentCard(cardNumber, expDate, cvv, targetAccount);
             targetAccount.setPaymentCard(newCard);
+
+            newCard.setPin(pin);
+            newCard.setDailyLimit(new BigDecimal(dailyLimitStr));
+            newCard.setFrozen(false);
 
             paymentCardRepository.save(newCard);
             accountRepository.save(targetAccount);

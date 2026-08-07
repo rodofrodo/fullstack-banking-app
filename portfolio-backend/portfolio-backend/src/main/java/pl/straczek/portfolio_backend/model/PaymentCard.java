@@ -3,6 +3,8 @@ package pl.straczek.portfolio_backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 public class PaymentCard
 {
@@ -16,6 +18,8 @@ public class PaymentCard
     private String expirationDate; // e.g. "12/28"
     private String cvv;            // e.g. "123"
     private boolean isFrozen = false;
+    private String pin;
+    private BigDecimal dailyLimit;
 
     // relation: one card belongs to one account
     @OneToOne
@@ -47,9 +51,13 @@ public class PaymentCard
     public String getCvv() { return cvv; }
     public BankAccount getBankAccount() { return bankAccount; }
     public boolean isFrozen() { return isFrozen; }
+    public String getPin() { return pin; }
+    public BigDecimal getDailyLimit() { return dailyLimit; }
 
     /*
      * Setters
      * */
     public void setFrozen(boolean frozen) { isFrozen = frozen; }
+    public void setPin(String pin) { this.pin = pin; }
+    public void setDailyLimit(BigDecimal dailyLimit) { this.dailyLimit = dailyLimit; }
 }

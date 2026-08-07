@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Login from './Login';
 import Dashboard from './Dashboard';
@@ -9,6 +9,7 @@ import History from './History';
 import Exchange from './Exchange';
 import AdminDashboard from './AdminDashboard';
 import CreateAccount from './CreateAccount';
+import OrderCard from './OrderCard';
 import { Routes, Route, Navigate, useNavigate, Link, NavLink, useLocation } from 'react-router-dom';
 
 const getRoleFromToken = (token) => {
@@ -53,7 +54,7 @@ function App() {
             {/* ======================================= */}
             {/*         MENU FOR A REGULAR USER         */}
             {/* ======================================= */}
-            {isLoggedIn && role !== 'ROLE_ADMIN' && location.pathname !== '/u/create-account' && (
+            {isLoggedIn && role !== 'ROLE_ADMIN' && location.pathname !== '/u/create-account' && !location.pathname.startsWith('/u/order-card') && (
                 <div className="nav-container">
                     <div className='nav-logo'>Ancient Bank</div>
                     <div className="nav-buttons-wrapper">
@@ -98,6 +99,7 @@ function App() {
 
                 {/* sub routes */}
                 <Route path="/u/create-account" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <CreateAccount /> : <Navigate to="/" />} />
+                <Route path="/u/order-card/:accountNumber" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <OrderCard /> : <Navigate to="/" />} />
 
                 {/* admin */}
                 <Route path="/admin/dashboard" element={isLoggedIn && role === 'ROLE_ADMIN' ? <AdminDashboard /> : <Navigate to="/" />} />

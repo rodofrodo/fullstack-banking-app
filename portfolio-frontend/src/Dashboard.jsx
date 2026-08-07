@@ -177,10 +177,10 @@ function Dashboard() {
                                             </div>
                                         </div>
                                     ) : (
-                                        !hasAnyCard && (
+                                        !hasAnyCard && (acc.accountType === 'PERSONAL' || acc.accountType === 'BUSINESS') && (
                                             <div style={{ textAlign: 'center' }}>
-                                                <button 
-                                                    onClick={() => handleOrderCard(acc.accountNumber)}
+                                                <button
+                                                    onClick={() => navigate(`/u/order-card/${acc.accountNumber}`)}
                                                     style={{ padding: '10px 20px', backgroundColor: '#333', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold', transition: 'background-color 0.2s' }}
                                                     onMouseOver={(e) => e.target.style.backgroundColor = '#555'}
                                                     onMouseOut={(e) => e.target.style.backgroundColor = '#333'}

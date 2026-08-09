@@ -76,17 +76,17 @@ export default function OrderCard() {
 
                 <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                     <button 
-                        type="button" // Ważne: type="button" żeby nie wysyłał formularza
+                        type="button" // Note: type="button" - this prevents the form from submitting when clicked
                         onClick={() => navigate('/u/dashboard')}
                         style={{ flex: 1, padding: '10px', backgroundColor: '#e9ecef', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
                     >
                         Cancel
                     </button>
                     <button 
-                        type="submit" // Przycisk typu submit odpala funkcję z <form onSubmit={...}>
+                        type="submit" // Note: type="submit" - this triggers the form's onSubmit handler
                         style={{ flex: 1, padding: '10px', backgroundColor: '#198754', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
                     >
-                        Order
+                        Order Card
                     </button>
                 </div>
             </form>

@@ -62,7 +62,9 @@ function App() {
                         <NavLink to="/u/transfer" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Transfer</NavLink>
                         <NavLink to="/u/history" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>History</NavLink>
                         <NavLink to="/u/exchange" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Exchange</NavLink> 
-                        <button onClick={handleLogout} className="nav-link logout-btn">Log Out</button>
+                    </div>
+                    <div className="nav-right-menu">
+                        <button onClick={handleLogout} className="profile-btn">Profile</button>
                     </div>
                 </div>
             )}
@@ -77,7 +79,10 @@ function App() {
                         {/* specifically for admins */}
                         <NavLink to="/admin/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Dashboard</NavLink>
                         <NavLink to="/admin/users" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Users</NavLink>
-                        <button onClick={handleLogout} className="nav-link logout-btn">Log Out</button>
+                        
+                    </div>
+                    <div className="nav-right-menu">
+                        <button onClick={handleLogout} className="profile-btn">Profile</button>
                     </div>
                 </div>
             )}

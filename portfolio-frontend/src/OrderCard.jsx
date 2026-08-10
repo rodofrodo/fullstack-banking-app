@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { formatAccountNumber } from './global/utils';
 
 export default function OrderCard() {
     const navigate = useNavigate();
@@ -49,7 +50,7 @@ export default function OrderCard() {
             <h3 style={{ marginTop: 0, color: '#333', textAlign: 'center' }}>Configure your card</h3>
             <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px', textAlign: 'center' }}>
                 Set a PIN and a safe daily limit for account<br/>
-                <strong style={{fontSize: '12px', wordBreak: 'break-all'}}>{accountNumber}</strong>
+                <strong style={{fontSize: '12px', wordBreak: 'break-all'}}>{formatAccountNumber(accountNumber)}</strong>
             </p>
             
             <form onSubmit={handleOrderCard} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>

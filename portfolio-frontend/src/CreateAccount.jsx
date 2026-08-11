@@ -49,7 +49,7 @@ export default function CreateAccount() {
                         value={accountType} 
                         onChange={e => setAccountType(e.target.value)} 
                         style={{ width: '100%', padding: '10px', marginTop: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                    >
+                    > {/* TODO */}
                         <option value="PERSONAL">Personal Account (debit card)</option>
                         <option value="BUSINESS">Business Account (low interest rates on loans)</option>
                         <option value="POCKET">Pocket Account (0.1% monthly profit)</option>
@@ -64,7 +64,7 @@ export default function CreateAccount() {
                         value={baseCurrency} 
                         onChange={e => setBaseCurrency(e.target.value)} 
                         style={{ width: '100%', padding: '10px', marginTop: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                    >
+                    > {/* TODO */}
                         <option value="PLN">PLN - Polish Złoty</option>
                         <option value="EUR">EUR - Euro</option>
                         <option value="USD">USD - US Dollar</option>

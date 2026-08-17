@@ -64,7 +64,7 @@ export default function CreateAccount() {
                         value={baseCurrency} 
                         onChange={e => setBaseCurrency(e.target.value)} 
                         style={{ width: '100%', padding: '10px', marginTop: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                    > {/* TODO */}
+                    > {/* TODO: all currencies */}
                         <option value="PLN">PLN - Polish Złoty</option>
                         <option value="EUR">EUR - Euro</option>
                         <option value="USD">USD - US Dollar</option>

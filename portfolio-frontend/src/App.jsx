@@ -10,6 +10,7 @@ import Exchange from './Exchange';
 import AdminDashboard from './AdminDashboard';
 import CreateAccount from './CreateAccount';
 import OrderCard from './OrderCard';
+import Profile from './Profile';
 import { Routes, Route, Navigate, useNavigate, Link, NavLink, useLocation } from 'react-router-dom';
 
 const getRoleFromToken = (token) => {
@@ -32,12 +33,6 @@ function App() {
     const isLoggedIn = !!token;
     const role = getRoleFromToken(token); // the role
 
-    const handleLogout = () => {
-        localStorage.removeItem('jwt_token'); // getting rid of the token
-        setToken(null); // changing the state to logged-out
-        navigate('/'); // redirecting to the home page
-    };
-
     const handleLoginSuccess = () => {
         const newToken = localStorage.getItem('jwt_token');
         setToken(newToken);
@@ -54,7 +49,7 @@ function App() {
             {/* ======================================= */}
             {/*         MENU FOR A REGULAR USER         */}
             {/* ======================================= */}
-            {isLoggedIn && role !== 'ROLE_ADMIN' && location.pathname !== '/u/create-account' && !location.pathname.startsWith('/u/order-card') && (
+            {isLoggedIn && role !== 'ROLE_ADMIN' && location.pathname !== '/u/create-account' && !location.pathname.startsWith('/u/order-card') && !location.pathname.startsWith('/u/profile') && (
                 <div className="nav-container">
                     <div className='nav-logo'>Ancient Bank</div>
                     <div className="nav-buttons-wrapper">
@@ -64,7 +59,7 @@ function App() {
                         <NavLink to="/u/exchange" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Exchange</NavLink> 
                     </div>
                     <div className="nav-right-menu">
-                        <button onClick={handleLogout} className="profile-btn">Profile</button>
+                        <button onClick={() => navigate('/u/profile')} className="profile-btn">Profile</button>
                     </div>
                 </div>
             )}
@@ -82,7 +77,7 @@ function App() {
                         
                     </div>
                     <div className="nav-right-menu">
-                        <button onClick={handleLogout} className="profile-btn">Profile</button>
+                        <button onClick={() => navigate('/u/profile')} className="profile-btn">Profile</button>
                     </div>
                 </div>
             )}
@@ -101,6 +96,7 @@ function App() {
                 <Route path="/u/transfer" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <Transfer /> : <Navigate to="/" />} />
                 <Route path="/u/history" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <History /> : <Navigate to="/" />} />
                 <Route path="/u/exchange" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <Exchange /> : <Navigate to="/" />} />
+                <Route path="/u/profile" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <Profile /> : <Navigate to="/" />} />
 
                 {/* sub routes */}
                 <Route path="/u/create-account" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <CreateAccount /> : <Navigate to="/" />} />

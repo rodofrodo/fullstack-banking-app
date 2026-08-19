@@ -15,6 +15,9 @@ public class AppUser
     private String password;
     private String role = "ROLE_USER";
 
+    @Column(columnDefinition = "TEXT")
+    private String avatar;
+
     // empty constructor
     public AppUser() {}
 
@@ -34,6 +37,7 @@ public class AppUser
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public String getRole() { return role; }
+    public String getAvatar() { return avatar; }
 
     /*
     * Setters
@@ -42,4 +46,5 @@ public class AppUser
     public void setEmail(String email) { this.email = email; }
     public void setPassword(String password) { this.password = password; }
     public void setRole(String role) { this.role = role; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
 }

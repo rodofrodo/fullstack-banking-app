@@ -33,6 +33,12 @@ function App() {
     const isLoggedIn = !!token;
     const role = getRoleFromToken(token); // the role
 
+    const handleLogout = () => {
+        localStorage.removeItem('jwt_token'); // getting rid of the token
+        setToken(null); // changing the state to logged-out
+        navigate('/'); // redirecting to the home page
+    };
+
     const handleLoginSuccess = () => {
         const newToken = localStorage.getItem('jwt_token');
         setToken(newToken);
@@ -77,7 +83,7 @@ function App() {
                         
                     </div>
                     <div className="nav-right-menu">
-                        <button onClick={() => navigate('/u/profile')} className="profile-btn">Profile</button>
+                        <button onClick={handleLogout} className="admin-logout-btn">Log Out</button>
                     </div>
                 </div>
             )}

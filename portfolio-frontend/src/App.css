@@ -29,7 +29,7 @@
 }
 
 /* profile button */
-.profile-btn {
+.profile-btn, .admin-logout-btn {
     position: absolute;
     top: 40px;
     right: 40px;
@@ -42,6 +42,14 @@
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
+}
+
+.admin-logout-btn {
+    background-color: #ff0000;
+}
+
+.admin-logout-btn:hover {
+    background-color: #cf4444;
 }
 
 .profile-btn:hover {

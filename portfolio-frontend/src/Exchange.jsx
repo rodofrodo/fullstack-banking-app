@@ -10,6 +10,32 @@ function Exchange() {
     const [exchangeTargetCurrency, setExchangeTargetCurrency] = useState('EUR');
     const [exchangeAmount, setExchangeAmount] = useState('');
 
+    // copy from CurrencyWidget.jsx
+    const [rates, setRates] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchRates = async () => {
+            try {
+                const token = localStorage.getItem('jwt_token');
+                const response = await axios.get('http://localhost:8080/api/currency/rates', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                setRates(response.data[0].rates);
+                setLoading(false);
+            } catch (error) {
+                setError('❌ Failed to retrieve current exchange rates.');
+                setLoading(false);
+            }
+        };
+
+        fetchRates();
+    }, []);
+
     // fetch user's accounts when the component mounts
     useEffect(() => {
         const fetchAccounts = async () => {
@@ -111,11 +137,12 @@ function Exchange() {
                                 onChange={(e) => setExchangeSourceCurrency(e.target.value)}
                                 style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc', backgroundColor: '#fff' }}
                             >
-                                <option value="PLN">PLN</option>
-                                <option value="EUR">EUR</option>
-                                <option value="USD">USD</option>
-                                <option value="CHF">CHF</option>
-                                <option value="GBP">GBP</option>
+                                <option value="PLN">PLN - Polish Złoty</option>
+                                {rates.map(rate => (
+                                    <option key={rate.code} value={rate.code}>
+                                        {rate.code} - {rate.currency}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         
@@ -126,11 +153,12 @@ function Exchange() {
                                 onChange={(e) => setExchangeTargetCurrency(e.target.value)}
                                 style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc', backgroundColor: '#fff' }}
                             >
-                                <option value="PLN">PLN</option>
-                                <option value="EUR">EUR</option>
-                                <option value="USD">USD</option>
-                                <option value="CHF">CHF</option>
-                                <option value="GBP">GBP</option>
+                                <option value="PLN">PLN - Polish Złoty</option>
+                                {rates.map(rate => (
+                                    <option key={rate.code} value={rate.code}>
+                                        {rate.code} - {rate.currency}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>

@@ -8,7 +8,6 @@ import pl.straczek.portfolio_backend.repository.AppUserRepository;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/p2p")

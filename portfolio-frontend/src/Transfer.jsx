@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { formatAccountNumber } from './global/utils';
+import './P2PTransferWidget';
+import P2PTransferWidget from './P2PTransferWidget';
 
 function Transfer() {
     // transfer form states
@@ -114,6 +116,8 @@ function Transfer() {
                     </button>
                 </form>
             </div>
+
+            <P2PTransferWidget />
         </div>
     );
 }

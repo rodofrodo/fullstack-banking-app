@@ -16,6 +16,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long>
     boolean existsByEmail(String email);
     // this will allow to filter the database faster
     Optional<AppUser> findByEmail(String email);
+    Optional<AppUser> findByUsername(String username);
 
     @Query("SELECT DISTINCT b.owner FROM BankAccount b WHERE b.paymentCard IS " +
             "NOT NULL AND LOWER(b.owner.username) LIKE LOWER(CONCAT('%', :query, '%'))")

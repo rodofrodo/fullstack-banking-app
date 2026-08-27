@@ -12,6 +12,9 @@ function Transfer() {
     const [amount, setAmount] = useState('');
     const [currency, setCurrency] = useState('PLN');
 
+    // for P2P transfer
+    const [selectedP2PUser, setSelectedP2PUser] = useState(null);
+
     // we use 'useEffect' to fetch the user's accounts when the component mounts
     useEffect(() => {
         const fetchAccounts = async () => {
@@ -34,8 +37,30 @@ function Transfer() {
     // handle the transfer form submission
     const handleTransfer = async (e) => {
         e.preventDefault();
+
+        if (!selectedP2PUser && !toAccount) {
+            alert("You need to type in a recipient's account number or select a friend!");
+            return;
+        }
+
+        const token = localStorage.getItem('jwt_token');
+
         try {
-            const token = localStorage.getItem('jwt_token');
+            if (selectedP2PUser) {
+                const p2pResponse = await axios.post('http://localhost:8080/api/p2p/transfer', {
+                    fromAccountNumber: fromAccount,
+                    targetUsername: selectedP2PUser.username,
+                    amount: amount,
+                    currency: currency
+                }, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                alert(p2pResponse.data);
+                window.location.reload();
+                return;
+            }
+
             const response = await axios.post('http://localhost:8080/api/accounts/transfer', {
                 fromAccountNumber: fromAccount,
                 toAccountNumber: toAccount.replace(/\s/g, ''), // IMPORTANT
@@ -63,6 +88,7 @@ function Transfer() {
                 <h2 style={{ color: '#007bff', marginTop: 0, textAlign: 'center' }}>Transfer Dashboard</h2>
                 <form onSubmit={handleTransfer} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>              
                     {/* List of user's accounts */}
+                    <p>Traditional way</p>
                     <select 
                         value={fromAccount} 
                         onChange={(e) => setFromAccount(e.target.value)}
@@ -84,9 +110,16 @@ function Transfer() {
                         onChange={(e) => {
                             const formatted = formatAccountNumber(e.target.value);
                             setToAccount(formatted);
+                            if (selectedP2PUser) setSelectedP2PUser(null);  // Clear selected P2P user if manual input is used
                         }} 
-                        required
+                        required={!selectedP2PUser}
                     />
+
+                    <p>P2P Transfer (requires a debit card)</p>
+                    <P2PTransferWidget onUserSelected={(user) => {
+                        setSelectedP2PUser(user);
+                        if (user) setToAccount(''); // we clear the manual input if a P2P user is selected
+                    }}/>
                     
                     <div style={{ display: 'flex', gap: '10px' }}>
                         <input 
@@ -116,8 +149,6 @@ function Transfer() {
                     </button>
                 </form>
             </div>
-
-            <P2PTransferWidget />
         </div>
     );
 }

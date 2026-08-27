@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function P2PTransferWidget() {
+export default function P2PTransferWidget({ onUserSelected }) {
     // vars
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -43,7 +43,10 @@ export default function P2PTransferWidget() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '8px' }}>
                     <img src={ selectedUser.avatar || defaultAvatar } alt="Avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                     <span style={{ fontWeight: 'bold' }}>{ selectedUser.username }</span>
-                    <button onClick={() => setSelectedUser(null)} style={{ marginLeft: 'auto', background: 'red', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>X</button>
+                    <button onClick={() => {
+                        setSelectedUser(null)
+                        onUserSelected(null)  // Notify parent component that no user is selected
+                        }} style={{ marginLeft: 'auto', background: 'red', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>X</button>
                 </div>
             ) : (
                 <input 
@@ -62,6 +65,7 @@ export default function P2PTransferWidget() {
                             key={index} 
                             onClick={() => {
                                 setSelectedUser(user);
+                                onUserSelected(user);  // Notify parent component of the selected user
                                 setSearchQuery('');
                                 setSearchResults([]);
                             }}

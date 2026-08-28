@@ -7,10 +7,14 @@ import pl.straczek.portfolio_backend.dto.P2PTransferRequest;
 import pl.straczek.portfolio_backend.dto.UserSearchResult;
 import pl.straczek.portfolio_backend.model.AppUser;
 import pl.straczek.portfolio_backend.model.BankAccount;
+import pl.straczek.portfolio_backend.model.Transaction;
+import pl.straczek.portfolio_backend.model.Wallet;
 import pl.straczek.portfolio_backend.repository.AppUserRepository;
 import pl.straczek.portfolio_backend.repository.BankAccountRepository;
+import pl.straczek.portfolio_backend.repository.TransactionRepository;
 import pl.straczek.portfolio_backend.repository.WalletRepository;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -22,15 +26,18 @@ public class P2PTransferController
     private final AppUserRepository userRepository;
     private final BankAccountRepository bankAccountRepository;
     private final WalletRepository walletRepository;
+    private final TransactionRepository transactionRepository;
 
     // ctor
     public P2PTransferController(AppUserRepository userRepository,
                                  BankAccountRepository bankAccountRepository,
-                                 WalletRepository walletRepository)
+                                 WalletRepository walletRepository,
+                                 TransactionRepository transactionRepository)
     {
         this.userRepository = userRepository;
         this.bankAccountRepository = bankAccountRepository;
         this.walletRepository = walletRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @GetMapping("/search")
@@ -98,8 +105,11 @@ public class P2PTransferController
                 .orElse(null);
 
         if (receiverWallet == null) {
-            // TODO: create a new wallet for the receiver
-            return ResponseEntity.badRequest().body("The receiver doesn't have a " + request.currency() + " wallet to receive funds.");
+            receiverWallet = new Wallet();
+            receiverWallet.setCurrency(request.currency());
+            receiverWallet.setBalance(BigDecimal.ZERO);
+
+            receiverWallet.setBankAccount(receiverAccount);
         }
 
         // MONEY TRANSFER
@@ -107,6 +117,16 @@ public class P2PTransferController
         receiverWallet.setBalance(receiverWallet.getBalance().add(request.amount()));
         walletRepository.save(senderWallet);
         walletRepository.save(receiverWallet);
+
+        // to save in history
+        Transaction transaction = new Transaction(
+                senderAccount.getAccountNumber(),
+                receiverAccount.getAccountNumber(),
+                request.amount(),
+                request.currency(),
+                java.time.LocalDateTime.now()
+        );
+        transactionRepository.save(transaction);
 
         return ResponseEntity.ok("P2P transfer to " + receiver.getUsername() + " successful!");
     }

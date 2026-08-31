@@ -14,6 +14,7 @@ function Transfer() {
 
     // for P2P transfer
     const [selectedP2PUser, setSelectedP2PUser] = useState(null);
+    const [pin, setPin] = useState('');
 
     // we use 'useEffect' to fetch the user's accounts when the component mounts
     useEffect(() => {
@@ -51,7 +52,8 @@ function Transfer() {
                     fromAccountNumber: fromAccount,
                     targetUsername: selectedP2PUser.username,
                     amount: amount,
-                    currency: currency
+                    currency: currency,
+                    pin: pin
                 }, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -143,6 +145,18 @@ function Transfer() {
                             <option value="GBP">GBP</option>
                         </select>
                     </div>
+
+                    {selectedP2PUser && (
+                        <input 
+                            type="password" 
+                            placeholder="Enter 4-digit PIN" 
+                            maxLength="4"
+                            value={pin}
+                            onChange={(e) => setPin(e.target.value)}
+                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', marginTop: '10px' }}
+                            required
+                        />
+                    )}
 
                     <button type="submit" style={{ padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
                         Transfer money

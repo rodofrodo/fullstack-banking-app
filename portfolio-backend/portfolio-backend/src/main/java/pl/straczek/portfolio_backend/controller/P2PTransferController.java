@@ -76,6 +76,17 @@ public class P2PTransferController
         if (senderAccount.getPaymentCard() == null)
             return ResponseEntity.badRequest().body("This account doesn't have any connected card!");
 
+        var card = senderAccount.getPaymentCard();
+
+        // checking PIN
+        if (!card.getPin().equals(request.pin()))
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid PIN!");
+
+        if (card.getDailyLimit() != null && card.getDailyLimit().compareTo(request.amount()) < 0)
+            return ResponseEntity.badRequest().body("The amount exceeds your card's transaction limit!");
+
         // searching for the first proper wallet
         var senderWallet = senderAccount.getWallets().stream()
                 .filter(w -> w.getCurrency().equals(request.currency()))

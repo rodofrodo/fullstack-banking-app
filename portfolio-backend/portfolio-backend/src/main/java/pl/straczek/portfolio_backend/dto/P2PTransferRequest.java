@@ -6,7 +6,8 @@ public record P2PTransferRequest(
         String fromAccountNumber, // sender (has to have a card)
         String targetUsername,    // our friend from the search engine
         BigDecimal amount,        // the amount we send
-        String currency           // e.g. PLN
+        String currency,          // e.g. PLN
+        String pin                // to proceed with the payment
 )
 {
 }

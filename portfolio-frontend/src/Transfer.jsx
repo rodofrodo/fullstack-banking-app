@@ -137,7 +137,7 @@ function Transfer() {
                             value={currency} 
                             onChange={(e) => setCurrency(e.target.value)}
                             style={{ flex: '1', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                        >
+                        > {/* TODO: Populate with actual currency options */}
                             <option value="PLN">PLN</option>
                             <option value="EUR">EUR</option>
                             <option value="USD">USD</option>

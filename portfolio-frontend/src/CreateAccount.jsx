@@ -38,7 +38,7 @@ export default function CreateAccount() {
     };
 
     return (
-        <div style={{ maxWidth: '600px', margin: '50px auto', padding: '30px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+        <div style={{ maxWidth: '600px', margin: '50px auto', padding: '30px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', fontFamily: 'sans-serif' }}>
             <h2 style={{ textAlign: 'center', color: '#004085', marginBottom: '10px' }}>Open a new account</h2>
             <p style={{ textAlign: 'center', color: '#6c757d', marginBottom: '30px' }}>Choose the product that best fits your needs.</p>
             

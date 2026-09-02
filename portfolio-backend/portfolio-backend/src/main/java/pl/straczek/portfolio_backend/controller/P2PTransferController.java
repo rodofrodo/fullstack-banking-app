@@ -1,0 +1,151 @@
+package pl.straczek.portfolio_backend.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.straczek.portfolio_backend.dto.P2PTransferRequest;
+import pl.straczek.portfolio_backend.dto.UserSearchResult;
+import pl.straczek.portfolio_backend.model.AppUser;
+import pl.straczek.portfolio_backend.model.BankAccount;
+import pl.straczek.portfolio_backend.model.Transaction;
+import pl.straczek.portfolio_backend.model.Wallet;
+import pl.straczek.portfolio_backend.repository.AppUserRepository;
+import pl.straczek.portfolio_backend.repository.BankAccountRepository;
+import pl.straczek.portfolio_backend.repository.TransactionRepository;
+import pl.straczek.portfolio_backend.repository.WalletRepository;
+
+import java.math.BigDecimal;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/p2p")
+@CrossOrigin(origins = "http://localhost:5173")
+public class P2PTransferController
+{
+    private final AppUserRepository userRepository;
+    private final BankAccountRepository bankAccountRepository;
+    private final WalletRepository walletRepository;
+    private final TransactionRepository transactionRepository;
+
+    // ctor
+    public P2PTransferController(AppUserRepository userRepository,
+                                 BankAccountRepository bankAccountRepository,
+                                 WalletRepository walletRepository,
+                                 TransactionRepository transactionRepository)
+    {
+        this.userRepository = userRepository;
+        this.bankAccountRepository = bankAccountRepository;
+        this.walletRepository = walletRepository;
+        this.transactionRepository = transactionRepository;
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserSearchResult>> searchUsers(@RequestParam String query, Principal principal)
+    {
+        // if someone typed in less than two characters, we return an empty list
+        if (query == null || query.length() < 2)
+            return ResponseEntity.ok(List.of());
+
+        String myEmail = principal.getName();
+        List<AppUser> foundUsers = userRepository.searchUsersWithCards(query);
+
+        // we change heavy AppUser objects into light UserSearchResult
+        // we also make sure we don't include ourselves in the results
+        List<UserSearchResult> results = foundUsers.stream()
+                .filter(user -> !user.getEmail().equals(myEmail))
+                .map(user -> new UserSearchResult(user.getUsername(), user.getAvatar()))
+                .toList();
+
+        return ResponseEntity.ok(results);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<?> executeP2PTransfer(@RequestBody P2PTransferRequest request, Principal principal)
+    {
+        // we check the sender and their account
+        AppUser sender = userRepository.findByEmail(principal.getName()).orElse(null);
+        BankAccount senderAccount = bankAccountRepository
+                .findByAccountNumber(request.fromAccountNumber()).orElse(null);
+
+        if (senderAccount == null || !senderAccount.getOwner().equals(sender))
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("This is not your account!");
+
+        if (senderAccount.getPaymentCard() == null)
+            return ResponseEntity.badRequest().body("This account doesn't have any connected card!");
+
+        var card = senderAccount.getPaymentCard();
+
+        // checking PIN
+        if (!card.getPin().equals(request.pin()))
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid PIN!");
+
+        // LIMITS
+        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
+        BigDecimal spentToday = transactionRepository.sumDailySpentAmount(senderAccount.getAccountNumber(), startOfDay, endOfDay);
+
+        if (spentToday.add(request.amount()).compareTo(card.getDailyLimit()) > 0)
+            return ResponseEntity.badRequest().body("You have already exceeded the limit: " + spentToday + " " + request.currency());
+
+        // searching for the first proper wallet
+        var senderWallet = senderAccount.getWallets().stream()
+                .filter(w -> w.getCurrency().equals(request.currency()))
+                .findFirst()
+                .orElse(null);
+
+        if (senderWallet == null || senderWallet.getBalance().compareTo(request.amount()) < 0)
+            return ResponseEntity.badRequest().body("Insufficient funds in " + request.currency() + " wallet.");
+
+        // we're looking for the receiver
+        AppUser receiver = userRepository.findByUsername(request.targetUsername()).orElse(null);
+        if (receiver == null)
+            return ResponseEntity.badRequest().body("User not found.");
+
+        BankAccount receiverAccount = bankAccountRepository.findByOwner(receiver).stream()
+                .filter(account -> account.getPaymentCard() != null)
+                .findFirst()
+                .orElse(null);
+
+        if (receiverAccount == null)
+            return ResponseEntity.badRequest().body("he receiver does not have a card connected for P2P transfers.");
+
+        // searching for the receiver's wallet of the same currency
+        var receiverWallet = receiverAccount.getWallets().stream()
+                .filter(w -> w.getCurrency().equals(request.currency()))
+                .findFirst()
+                .orElse(null);
+
+        if (receiverWallet == null) {
+            receiverWallet = new Wallet();
+            receiverWallet.setCurrency(request.currency());
+            receiverWallet.setBalance(BigDecimal.ZERO);
+
+            receiverWallet.setBankAccount(receiverAccount);
+        }
+
+        // MONEY TRANSFER
+        senderWallet.setBalance(senderWallet.getBalance().subtract(request.amount()));
+        receiverWallet.setBalance(receiverWallet.getBalance().add(request.amount()));
+        walletRepository.save(senderWallet);
+        walletRepository.save(receiverWallet);
+
+        // to save in history
+        Transaction transaction = new Transaction(
+                senderAccount.getAccountNumber(),
+                receiverAccount.getAccountNumber(),
+                request.amount(),
+                request.currency(),
+                java.time.LocalDateTime.now()
+        );
+        transactionRepository.save(transaction);
+
+        return ResponseEntity.ok("P2P transfer to " + receiver.getUsername() + " successful!");
+    }
+}

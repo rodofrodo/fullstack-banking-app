@@ -46,7 +46,7 @@ export default function OrderCard() {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '50px auto', padding: '30px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+        <div style={{ maxWidth: '400px', margin: '50px auto', padding: '30px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', fontFamily: 'sans-serif' }}>
             <h3 style={{ marginTop: 0, color: '#333', textAlign: 'center' }}>Configure your card</h3>
             <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px', textAlign: 'center' }}>
                 Set a PIN and a safe daily limit for account<br/>

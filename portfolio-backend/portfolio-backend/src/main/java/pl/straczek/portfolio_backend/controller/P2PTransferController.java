@@ -16,6 +16,8 @@ import pl.straczek.portfolio_backend.repository.WalletRepository;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -84,8 +86,13 @@ public class P2PTransferController
                     .status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid PIN!");
 
-        if (card.getDailyLimit() != null && card.getDailyLimit().compareTo(request.amount()) < 0)
-            return ResponseEntity.badRequest().body("The amount exceeds your card's transaction limit!");
+        // LIMITS
+        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
+        BigDecimal spentToday = transactionRepository.sumDailySpentAmount(senderAccount.getAccountNumber(), startOfDay, endOfDay);
+
+        if (spentToday.add(request.amount()).compareTo(card.getDailyLimit()) > 0)
+            return ResponseEntity.badRequest().body("You have already exceeded the limit: " + spentToday + " " + request.currency());
 
         // searching for the first proper wallet
         var senderWallet = senderAccount.getWallets().stream()

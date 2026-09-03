@@ -1,4 +1,4 @@
-package pl.straczek.portfolio_backend.controller;
+package pl.straczek.portfolio_backend.dto;
 
 public record CreateAccountRequest(
         String accountType,

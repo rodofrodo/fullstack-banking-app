@@ -13,43 +13,33 @@ import java.util.List;
 @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Authentication") // IMPORTANT
 public class AppUserController
 {
+    // globals
     private final AppUserService appUserService;
 
-    public AppUserController(AppUserService appUserService)
-    {
-        this.appUserService = appUserService;
-    }
+    // ctor
+    public AppUserController(AppUserService appUserService) { this.appUserService = appUserService; }
 
-    // endpoint to download all the users (GET https://localhost:8080/api/users)
     @GetMapping
     public List<AppUser> getAllUsers() { return appUserService.getAllUsers(); }
 
-    // endpoint to register a user (POST https://localhost:8080/api/users)
     @PostMapping
     public ResponseEntity<String> registerUser(@RequestBody AppUser user)
     {
-        try
-        {
+        try {
             String successMessage = appUserService.registerUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(successMessage);
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
-    // endpoint to log in (POST https://localhost:8080/api/users/login)
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody AppUser loginRequest)
     {
-        try
-        {
+        try {
             String token = appUserService.loginUser(loginRequest);
             return ResponseEntity.ok(token);
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }

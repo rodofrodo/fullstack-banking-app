@@ -11,10 +11,12 @@ import java.util.List;
 @Service
 public class AppUserService
 {
+    // globals
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    // ctor
     public AppUserService(AppUserRepository userRepository,
                           PasswordEncoder passwordEncoder,
                           JwtService jwtService)
@@ -24,8 +26,10 @@ public class AppUserService
         this.jwtService = jwtService;
     }
 
+    // downloads all the users
     public List<AppUser> getAllUsers() { return userRepository.findAll(); }
 
+    // registers a user
     @Transactional
     public String registerUser(AppUser user)
     {
@@ -39,6 +43,7 @@ public class AppUserService
         return "Success: User " + user.getUsername() + " has been successfully registered!";
     }
 
+    // logs in
     public String loginUser(AppUser loginRequest)
     {
         AppUser user = userRepository.findByEmail(loginRequest.getEmail())

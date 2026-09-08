@@ -15,13 +15,11 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class P2PTransferController
 {
+    // globals
     private final P2PTransferService transferService;
 
     // ctor
-    public P2PTransferController(P2PTransferService transferService)
-    {
-        this.transferService = transferService;
-    }
+    public P2PTransferController(P2PTransferService transferService) { this.transferService = transferService; }
 
     @GetMapping("/search")
     public ResponseEntity<List<UserSearchResult>> searchUsers(@RequestParam String query, Principal principal)
@@ -33,23 +31,16 @@ public class P2PTransferController
     @PostMapping("/transfer")
     public ResponseEntity<?> executeP2PTransfer(@RequestBody P2PTransferRequest request, Principal principal)
     {
-        try
-        {
+        try {
             transferService.executeTransfer(request, principal.getName());
             return ResponseEntity.ok("P2P transfer to " + request.targetUsername() + " successful!");
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             if (e.getMessage().equals("Invalid PIN!"))
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().body("An unexpected server error occurred.");
         }
     }

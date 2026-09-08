@@ -21,11 +21,13 @@ import java.util.List;
 @Service
 public class P2PTransferService
 {
+    // globals
     private final AppUserRepository userRepository;
     private final BankAccountRepository bankAccountRepository;
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
 
+    // ctor
     public P2PTransferService(AppUserRepository userRepository,
                                  BankAccountRepository bankAccountRepository,
                                  WalletRepository walletRepository,
@@ -37,6 +39,7 @@ public class P2PTransferService
         this.transactionRepository = transactionRepository;
     }
 
+    // searches users (as a list to choose from)
     public List<UserSearchResult> searchUsers(String query, String myEmail)
     {
         if (query == null || query.length() < 2)
@@ -48,6 +51,7 @@ public class P2PTransferService
                 .toList();
     }
 
+    // executes P2P payment
     @Transactional
     public void executeTransfer(P2PTransferRequest request, String senderEmail)
     {

@@ -25,10 +25,12 @@ import java.util.Random;
 @Service
 public class BankAccountService
 {
+    // globals
     private final BankAccountRepository accountRepository;
     private final AppUserRepository userRepository;
     private final TransactionRepository transactionRepository;
 
+    // ctor
     public BankAccountService(BankAccountRepository accountRepository,
                                  AppUserRepository userRepository,
                                  TransactionRepository transactionRepository)
@@ -38,12 +40,14 @@ public class BankAccountService
         this.transactionRepository = transactionRepository;
     }
 
+    // returns the user by email, but used for returning the logged in user
     private AppUser getUserByEmail(String email)
     {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new SecurityException("Cannot find such a user"));
     }
 
+    // opens an account (you get 100 PLN to start)
     @Transactional
     public String createAccount(String email, CreateAccountRequest request)
     {
@@ -67,6 +71,7 @@ public class BankAccountService
                 + " | Base currency: " + request.baseCurrency();
     }
 
+    // transfers money
     @Transactional
     public void transferMoney(String email, TransferRequest request)
     {
@@ -120,6 +125,7 @@ public class BankAccountService
         transactionRepository.save(transaction);
     }
 
+    // returns the history of transactions
     public List<Transaction> getTransactionHistory(String email, String accountNumber)
     {
         AppUser user = getUserByEmail(email);
@@ -133,12 +139,14 @@ public class BankAccountService
         return transactionRepository.findBySenderAccountNumberOrReceiverAccountNumberOrderByTimestampDesc(accountNumber, accountNumber);
     }
 
+    // returns user's accounts
     public List<BankAccount> getMyAccounts(String email)
     {
         AppUser user = getUserByEmail(email);
         return accountRepository.findByOwner(user);
     }
 
+    // helper function for currency rates
     private BigDecimal getNbpRate(String currency) throws Exception
     {
         if (currency.equals("PLN"))
@@ -152,6 +160,7 @@ public class BankAccountService
         return new BigDecimal(root.path("rates").get(0).path("mid").asString());
     }
 
+    // exchanges currency
     @Transactional
     public String exchangeCurrency(String email, ExchangeRequest request) throws Exception
     {

@@ -15,67 +15,46 @@ import java.security.Principal;
 @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Authentication") // IMPORTANT
 public class BankAccountController
 {
+    // globals
     private final BankAccountService bankAccountService;
 
     // ctor
-    public BankAccountController(BankAccountService bankAccountService)
-    {
-        this.bankAccountService = bankAccountService;
-    }
+    public BankAccountController(BankAccountService bankAccountService) { this.bankAccountService = bankAccountService; }
 
-    // opening an account (you get 100 PLN to start)
     @PostMapping("/create")
     public ResponseEntity<String> createAccount(@RequestBody CreateAccountRequest request, Principal principal)
     {
-        try
-        {
+        try {
             String response = bankAccountService.createAccount(principal.getName(), request);
             return ResponseEntity.ok(response);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    // transferring money
     @PostMapping("/transfer")
     public ResponseEntity<String> transferMoney(@RequestBody TransferRequest request, Principal principal)
     {
-        try
-        {
+        try {
             bankAccountService.transferMoney(principal.getName(), request);
             return ResponseEntity.ok("Transfer (" + request.amount() + " " + request.currency() + ") has been sent successfully");
-
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    // getting the history of transactions (therefore GET)
     @GetMapping("/transactions/{accountNumber}")
     public ResponseEntity<?> getTransactionHistory(@PathVariable String accountNumber, Principal principal)
     {
-        try
-        {
+        try {
             return ResponseEntity.ok(bankAccountService.getTransactionHistory(principal.getName(), accountNumber));
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
@@ -83,12 +62,9 @@ public class BankAccountController
     @GetMapping("/my")
     public ResponseEntity<?> getMyAccounts(Principal principal)
     {
-        try
-        {
+        try {
             return ResponseEntity.ok(bankAccountService.getMyAccounts(principal.getName()));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
     }
@@ -96,21 +72,14 @@ public class BankAccountController
     @PostMapping("/exchange")
     public ResponseEntity<String> exchangeCurrency(@RequestBody ExchangeRequest request, Principal principal)
     {
-        try
-        {
+        try {
             String response = bankAccountService.exchangeCurrency(principal.getName(), request);
             return ResponseEntity.ok(response);
-
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: Could not fetch rates from NBP or process transaction");
         }
     }

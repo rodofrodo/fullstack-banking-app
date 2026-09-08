@@ -6,13 +6,13 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class CurrencyService
 {
+    // globals
     private final RestTemplate restTemplate;
 
-    public CurrencyService()
-    {
-        this.restTemplate = new RestTemplate();
-    }
+    // ctor
+    public CurrencyService() { this.restTemplate = new RestTemplate(); }
 
+    // retrieves current values of currencies
     public String getLiveRates()
     {
         String nbpApiUrl = "http://api.nbp.pl/api/exchangerates/tables/A?format=json";

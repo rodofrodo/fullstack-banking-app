@@ -10,24 +10,19 @@ import pl.straczek.portfolio_backend.service.CurrencyService;
 @RequestMapping("/api/currency")
 public class CurrencyController
 {
+    // globals
     private final CurrencyService currencyService;
 
-    public CurrencyController(CurrencyService currencyService)
-    {
-        this.currencyService = currencyService;
-    }
+    // ctor
+    public CurrencyController(CurrencyService currencyService) { this.currencyService = currencyService; }
 
-    // endpoint to get current values of currencies (GET https://localhost:8080/api/currency/rates)
     @GetMapping("/rates")
     public ResponseEntity<String> getLiveRates()
     {
-        try
-        {
+        try {
             String rates = currencyService.getLiveRates();
             return ResponseEntity.ok(rates);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: Unable to fetch live rates from NBP at this time.");
         }
     }

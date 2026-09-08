@@ -1,22 +1,29 @@
 package pl.straczek.portfolio_backend.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import pl.straczek.portfolio_backend.service.CurrencyService;
 
 @RestController
 @RequestMapping("/api/currency")
 public class CurrencyController
 {
-    // endpoint to get current values of currencies (GET https://localhost:8080/api/currency/rates)
-    @GetMapping("/rates")
-    public String getLiveRates()
-    {
-        RestTemplate restTemplate = new RestTemplate();
+    // globals
+    private final CurrencyService currencyService;
 
-        // API NBP (National Bank of Poland) - Table A in JSON
-        String nbpApiUrl = "http://api.nbp.pl/api/exchangerates/tables/A?format=json";
-        return restTemplate.getForObject(nbpApiUrl, String.class);
+    // ctor
+    public CurrencyController(CurrencyService currencyService) { this.currencyService = currencyService; }
+
+    @GetMapping("/rates")
+    public ResponseEntity<String> getLiveRates()
+    {
+        try {
+            String rates = currencyService.getLiveRates();
+            return ResponseEntity.ok(rates);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: Unable to fetch live rates from NBP at this time.");
+        }
     }
 }

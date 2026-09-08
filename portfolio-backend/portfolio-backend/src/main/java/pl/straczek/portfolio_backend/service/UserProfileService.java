@@ -10,13 +10,13 @@ import java.util.Map;
 @Service
 public class UserProfileService
 {
+    // globals
     private final AppUserRepository userRepository;
 
-    public UserProfileService(AppUserRepository userRepository)
-    {
-        this.userRepository = userRepository;
-    }
+    // ctor
+    public UserProfileService(AppUserRepository userRepository) { this.userRepository = userRepository; }
 
+    // downloads data
     public Map<String, String> getUserProfile(String email)
     {
         AppUser user = userRepository.findByEmail(email)
@@ -29,6 +29,7 @@ public class UserProfileService
         );
     }
 
+    // uploads a photo
     @Transactional
     public void updateAvatar(String email, String base64Image)
     {

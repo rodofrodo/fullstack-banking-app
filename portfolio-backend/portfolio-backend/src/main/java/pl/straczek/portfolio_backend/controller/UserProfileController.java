@@ -13,40 +13,30 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 public class UserProfileController
 {
+    // globals
     private final UserProfileService userProfileService;
 
     // ctor
-    public UserProfileController(UserProfileService userProfileService)
-    {
-        this.userProfileService = userProfileService;
-    }
+    public UserProfileController(UserProfileService userProfileService) { this.userProfileService = userProfileService; }
 
-    // endpoint to download data
     @GetMapping("/me")
     public ResponseEntity<?> getMyProfile(Principal principal)
     {
-        try
-        {
+        try {
             Map<String, String> profileData = userProfileService.getUserProfile(principal.getName());
             return ResponseEntity.ok(profileData);
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
-    // endpoint to upload a photo
     @PostMapping("/avatar")
     public ResponseEntity<?> updateAvatar(@RequestBody Map<String, String> request, Principal principal)
     {
-        try
-        {
+        try {
             userProfileService.updateAvatar(principal.getName(), request.get("avatar"));
             return ResponseEntity.ok("Profile picture updated!");
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

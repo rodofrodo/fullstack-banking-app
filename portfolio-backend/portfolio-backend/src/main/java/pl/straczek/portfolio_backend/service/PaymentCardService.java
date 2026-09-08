@@ -15,11 +15,13 @@ import java.util.List;
 @Service
 public class PaymentCardService
 {
+    // globals
     private final BankAccountRepository accountRepository;
     private final PaymentCardRepository paymentCardRepository;
     private final AppUserRepository userRepository;
     private final CardGeneratorService cardGeneratorService;
 
+    // ctor
     public PaymentCardService(BankAccountRepository accountRepository,
                                  PaymentCardRepository paymentCardRepository,
                                  AppUserRepository userRepository,
@@ -31,6 +33,7 @@ public class PaymentCardService
         this.cardGeneratorService = cardGeneratorService;
     }
 
+    // orders a new debit card
     @Transactional
     public void orderNewCard(String email, String requestedAccountNumber, String pin, String dailyLimitStr)
     {

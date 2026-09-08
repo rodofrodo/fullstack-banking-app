@@ -13,18 +13,16 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 public class PaymentCardController
 {
+    // globals
     private final PaymentCardService paymentCardService;
 
-    public PaymentCardController(PaymentCardService paymentCardService)
-    {
-        this.paymentCardService = paymentCardService;
-    }
+    // ctor
+    public PaymentCardController(PaymentCardService paymentCardService) { this.paymentCardService = paymentCardService; }
 
     @PostMapping("/create")
     public ResponseEntity<String> orderNewCard(@RequestBody Map<String, String> request, Principal principal)
     {
-        try
-        {
+        try {
             String accountNumber = request.get("accountNumber");
             String pin = request.get("pin");
             String dailyLimit = request.get("dailyLimit");
@@ -32,17 +30,11 @@ public class PaymentCardController
             paymentCardService.orderNewCard(principal.getName(), accountNumber, pin, dailyLimit);
 
             return ResponseEntity.ok("Success! Your new Mastercard has been issued.");
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Crash: " + e.getMessage());
         }
     }

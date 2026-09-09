@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CurrencyWidget from './CurrencyWidget';
-import { formatAccountNumber } from './global/utils';
+import { formatAccountNumber, getEnglishCurrencyName } from './global/utils';
 
 function Exchange() {
     const [accounts, setAccounts] = useState([]);
@@ -140,7 +140,7 @@ function Exchange() {
                                 <option value="PLN">PLN - Polish Złoty</option>
                                 {rates.map(rate => (
                                     <option key={rate.code} value={rate.code}>
-                                        {rate.code} - {rate.currency}
+                                        {rate.code} - {getEnglishCurrencyName(rate.code)}
                                     </option>
                                 ))}
                             </select>
@@ -156,7 +156,7 @@ function Exchange() {
                                 <option value="PLN">PLN - Polish Złoty</option>
                                 {rates.map(rate => (
                                     <option key={rate.code} value={rate.code}>
-                                        {rate.code} - {rate.currency}
+                                        {rate.code} - {getEnglishCurrencyName(rate.code)}
                                     </option>
                                 ))}
                             </select>

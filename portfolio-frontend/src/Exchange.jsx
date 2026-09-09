@@ -93,7 +93,7 @@ function Exchange() {
                     </h3>
                 </div>
 
-                <CurrencyWidget />
+                <CurrencyWidget rates={rates} loading={loading} error={error} />
 
                 <form onSubmit={handleExchange} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
                     {/* List of user's accounts */}

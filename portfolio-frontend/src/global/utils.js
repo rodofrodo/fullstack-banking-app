@@ -23,3 +23,14 @@ export const formatBalance = (amount) => {
     if (amount == null || amount === undefined) return '0.00';
     return Number(amount).toFixed(2);
 };
+
+export const getEnglishCurrencyName = (currencyCode) => {
+    try {
+        // 'en' is the language code for English, and 'currency' is the type of display we want
+        const formatter = new Intl.DisplayNames(['en'], { type: 'currency' });
+        return formatter.of(currencyCode);
+    } catch (error) {
+        console.error(`Error occurred while fetching currency name for code: ${currencyCode}`, error);
+        return currencyCode;
+    }
+};

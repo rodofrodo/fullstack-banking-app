@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { formatAccountNumber } from './global/utils';
+import { formatAccountNumber, getEnglishCurrencyName } from './global/utils';
 import './P2PTransferWidget';
 import P2PTransferWidget from './P2PTransferWidget';
+import { useCurrencyRates } from './global/useCurrencyRates';
 
 function Transfer() {
     // transfer form states
@@ -11,6 +12,7 @@ function Transfer() {
     const [toAccount, setToAccount] = useState('');
     const [amount, setAmount] = useState('');
     const [currency, setCurrency] = useState('PLN');
+    const { rates } = useCurrencyRates(); // we use the custom hook to get the latest currency rates
 
     // for P2P transfer
     const [selectedP2PUser, setSelectedP2PUser] = useState(null);
@@ -137,12 +139,13 @@ function Transfer() {
                             value={currency} 
                             onChange={(e) => setCurrency(e.target.value)}
                             style={{ flex: '1', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                        > {/* TODO: Populate with actual currency options */}
-                            <option value="PLN">PLN</option>
-                            <option value="EUR">EUR</option>
-                            <option value="USD">USD</option>
-                            <option value="CHF">CHF</option>
-                            <option value="GBP">GBP</option>
+                        >
+                            <option value="PLN">PLN - Polish Złoty</option>
+                                {rates.map(rate => (
+                                    <option key={rate.code} value={rate.code}>
+                                        {rate.code} - {getEnglishCurrencyName(rate.code)}
+                                    </option>
+                                ))}
                         </select>
                     </div>
 

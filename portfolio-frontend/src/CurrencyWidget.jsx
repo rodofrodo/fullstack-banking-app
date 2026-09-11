@@ -1,40 +1,11 @@
-import { useState, useEffect, useEffectEvent } from 'react';
-import axios from 'axios';
+import React from 'react';
 
-function CurrencyWidget() {
-    const [rates, setRates] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-
-    useEffect(() => {
-        const fetchRates = async () => {
-            try {
-                const token = localStorage.getItem('jwt_token');
-                const response = await axios.get('http://localhost:8080/api/currency/rates', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                // the first element of the array is the object 'rates'
-                const allRates = response.data[0].rates;
-                // the currencies we want
-                const targetCurrencies = ['EUR', 'USD', 'GBP', 'CHF'];
-                const filteredRates = allRates.filter(rate => targetCurrencies.includes(rate.code));
-
-                setRates(filteredRates);
-                setLoading(false);
-            } catch (error) {
-                setError('❌ Failed to retrieve current exchange rates.');
-                setLoading(false);
-            }
-        };
-
-        fetchRates();
-    }, []);
-
+function CurrencyWidget({ rates, loading, error }) {
     if (loading) return <div style={{ padding: '20px', textAlign: 'center' }}>⏳ Loading exchange rates...</div>;
     if (error) return <div style={{ padding: '10px', textAlign: 'center', color: '#dc3545' }}>{error}</div>;
+
+    const targetCurrencies = ['EUR', 'USD', 'GBP', 'CHF'];
+    const filteredRates = rates.filter(rate => targetCurrencies.includes(rate.code));
 
     return (
         <div style={{
@@ -50,7 +21,7 @@ function CurrencyWidget() {
             </h3>
 
             <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: '15px' }}>
-                {rates.map(rate => (
+                {filteredRates.map(rate => (
                     <div key={rate.code} style={{ textAlign: 'center', minWidth: '80px' }}>
                         <div style={{ fontSize: '18px', fontWeight: '700', color: '#0066ff' }}>
                             {rate.code}

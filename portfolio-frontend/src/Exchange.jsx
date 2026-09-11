@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CurrencyWidget from './CurrencyWidget';
 import { formatAccountNumber, getEnglishCurrencyName } from './global/utils';
+import { useCurrencyRates } from './global/useCurrencyRates';
 
 function Exchange() {
     const [accounts, setAccounts] = useState([]);
@@ -10,31 +11,7 @@ function Exchange() {
     const [exchangeTargetCurrency, setExchangeTargetCurrency] = useState('EUR');
     const [exchangeAmount, setExchangeAmount] = useState('');
 
-    // copy from CurrencyWidget.jsx
-    const [rates, setRates] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-
-    useEffect(() => {
-        const fetchRates = async () => {
-            try {
-                const token = localStorage.getItem('jwt_token');
-                const response = await axios.get('http://localhost:8080/api/currency/rates', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                setRates(response.data[0].rates);
-                setLoading(false);
-            } catch (error) {
-                setError('❌ Failed to retrieve current exchange rates.');
-                setLoading(false);
-            }
-        };
-
-        fetchRates();
-    }, []);
+    const { rates, loading, error } = useCurrencyRates();
 
     // fetch user's accounts when the component mounts
     useEffect(() => {

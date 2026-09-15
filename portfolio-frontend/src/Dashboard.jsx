@@ -106,6 +106,10 @@ function Dashboard() {
         };
     };
 
+    /*
+        TODO: The whole dashboard will get a fresh new design in the future.
+    */
+
     return (
         <div style={{ maxWidth: '650px', margin: '20px auto', fontFamily: 'sans-serif' }}>
             <div style={{ border: '1px solid #ffc107', padding: '25px', borderRadius: '8px', backgroundColor: '#fffdf6', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>

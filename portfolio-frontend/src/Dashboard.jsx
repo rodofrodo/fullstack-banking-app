@@ -55,6 +55,7 @@ function Dashboard() {
         }
     };
 
+    // i think it's unused
     const handleOrderCard = async (accountNumber) => {
         const token = localStorage.getItem('jwt_token');
         if (!token)

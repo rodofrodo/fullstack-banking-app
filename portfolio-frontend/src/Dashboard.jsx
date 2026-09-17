@@ -55,44 +55,6 @@ function Dashboard() {
         }
     };
 
-    const handleOrderCard = async (accountNumber) => {
-        const token = localStorage.getItem('jwt_token');
-        if (!token)
-        {
-            setAccountMessage('❌ No token! You need to sign in first.');
-            return;
-        }
-        setAccountMessage(''); 
-
-        try {
-            const response = await axios.post(
-                'http://localhost:8080/api/cards/create',
-                { accountNumber: accountNumber },
-                { headers: { Authorization: 'Bearer ' + token } }
-            );
-
-            setAccountMessage('✅ ' + response.data);
-            fetchAccounts();
-        } catch (error) {
-            let errorMsg = 'Server connection error.';
-            let statusCode = 'Unknown';
-            
-            if (error.response) {
-                statusCode = error.response.status;
-                if (typeof error.response.data === 'string' && error.response.data.trim() !== '') {
-                    errorMsg = error.response.data;
-                } else if (statusCode === 403) {
-                    errorMsg = 'Access denied by Spring Security (403).';
-                } else if (statusCode === 400) {
-                    errorMsg = 'Bad Request (400) - check JSON mapping.';
-                } else {
-                    errorMsg = JSON.stringify(error.response.data);
-                }
-            }
-            setAccountMessage(`❌ Error ${statusCode}: ${errorMsg}`);
-        }
-    };
-
     const hasAnyCard = accounts.some(acc => acc.paymentCard != null);
 
     const getAccountTypeName = (type) => {
@@ -105,6 +67,10 @@ function Dashboard() {
             default: return 'Standard Account';
         };
     };
+
+    /*
+        TODO: The whole dashboard will get a fresh new design in the future.
+    */
 
     return (
         <div style={{ maxWidth: '650px', margin: '20px auto', fontFamily: 'sans-serif' }}>

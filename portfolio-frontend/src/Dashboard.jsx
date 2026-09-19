@@ -1,12 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { formatAccountNumber, formatBalance } from './global/utils';
 import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
-    const [accountMessage, setAccountMessage] = useState('');
     const [accounts, setAccounts] = useState([]);
+    const [selectedAccount, setSelectedAccount] = useState(null);
+    const [accountMessage, setAccountMessage] = useState('');
     const navigate = useNavigate();
+
+    // new states
+    const scrollRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
 
     const fetchAccounts = async () => {
         const token = localStorage.getItem('jwt_token');
@@ -18,6 +25,10 @@ function Dashboard() {
                 { headers: { Authorization: 'Bearer ' + token } }
             );
             setAccounts(response.data);
+
+            // we choose the first account automatically
+            if (response.data.length > 0)
+                setSelectedAccount(response.data[0]);
         } catch (error) {
             console.error("Cannot download the accounts: ", error);
         }
@@ -26,34 +37,6 @@ function Dashboard() {
     useEffect(() => {
         fetchAccounts();
     }, []);
-
-    const handleCreateAccount = async () => {
-        const token = localStorage.getItem('jwt_token');
-        if (!token) {
-            setAccountMessage('❌ No token! You need to sign in first.');
-            return;
-        }
-
-        try {
-            // for tests
-            const payload = {
-                accountType: 'PERSONAL',
-                isMultiCurrency: true,
-                baseCurrency: 'PLN'
-            };
-
-            const response = await axios.post(
-                'http://localhost:8080/api/accounts/create',
-                payload,
-                { headers: { Authorization: 'Bearer ' + token } }
-            );
-            setAccountMessage('✅ ' + response.data);
-            fetchAccounts();
-        } catch (error) {
-            const errorMsg = error.response?.data ? (typeof error.response.data === 'string' ? error.response.data : JSON.stringify(error.response.data)) : 'Server connection error.';
-            setAccountMessage('❌ ' + errorMsg);
-        }
-    };
 
     const hasAnyCard = accounts.some(acc => acc.paymentCard != null);
 
@@ -68,12 +51,146 @@ function Dashboard() {
         };
     };
 
-    /*
-        TODO: The whole dashboard will get a fresh new design in the future.
-    */
+    // --- Logika przesuwania myszką ---
+    const handleMouseDown = (e) => {
+        setIsDragging(false); // Resetujemy flagę przeciągania
+        setStartX(e.pageX - scrollRef.current.offsetLeft);
+        setScrollLeft(scrollRef.current.scrollLeft);
+    };
+
+    const handleMouseMove = (e) => {
+        // e.buttons === 1 oznacza, że lewy przycisk myszy jest wciśnięty
+        if (e.buttons !== 1) return; 
+        
+        const x = e.pageX - scrollRef.current.offsetLeft;
+        const walk = x - startX;
+        
+        // Jeśli myszka przesunęła się o więcej niż 5px, traktujemy to jako przeciąganie, a nie kliknięcie
+        if (Math.abs(walk) > 5) {
+            setIsDragging(true);
+        }
+        
+        scrollRef.current.scrollLeft = scrollLeft - walk;
+    };
+
+    const handleCardClick = (acc) => {
+        // Blokujemy nawigację, jeśli użytkownik tylko przesuwał karuzelę
+        if (isDragging) return;
+        navigate(`/u/account/${acc.id}`, { state: { account: acc } });
+    };
 
     return (
-        <div style={{ maxWidth: '650px', margin: '20px auto', fontFamily: 'sans-serif' }}>
+        <div style={{ maxWidth: '1300px', margin: '20px auto', fontFamily: 'sans-serif' }}>
+            
+            {/* Wstrzykujemy CSS ukrywający systemowy pasek przewijania */}
+            <style>{`
+                .hide-scrollbar::-webkit-scrollbar { display: none; }
+                .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            `}</style>
+
+            <div style={{ backgroundColor: '#e2f0fe', borderRadius: '22px', padding: '25px 25px 15px 25px' }}>
+                <h2 style={{ margin: '0 0 20px 0', fontSize: '22px', color: '#000', fontWeight: 'bold', fontFamily: 'Inter' }}>
+                    Bank accounts
+                </h2>
+
+                {/* Kontener karuzeli z podpiętą referencją i eventami myszy */}
+                <div 
+                    ref={scrollRef}
+                    className="hide-scrollbar"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    style={{ 
+                        display: 'flex', 
+                        gap: '15px', 
+                        overflowX: 'auto', 
+                        paddingBottom: '10px',
+                        cursor: 'grab',
+                        userSelect: 'none' // Zapobiega zaznaczaniu tekstu podczas przeciągania
+                    }}
+                >
+                    {accounts.map((acc, index) => {
+                        const mainWallet = acc.wallets && acc.wallets.length > 0 ? acc.wallets[0] : { balance: 0, currency: 'PLN' };
+                        
+                        const gradients = [
+                            'linear-gradient(135deg, #cde4fa, #a5d2fc)', 
+                            'linear-gradient(135deg, #e4cbf8, #c1aef7)', 
+                            'linear-gradient(135deg, #cbf8eb, #a5fce4)'
+                        ];
+                        const bg = gradients[index % gradients.length];
+
+                        return (
+                            <div 
+                                key={acc.id} 
+                                onClick={() => handleCardClick(acc)}
+                                style={{ 
+                                    width: '455px', 
+                                    flexShrink: 0,
+                                    height: '245px',
+                                    padding: '20px', 
+                                    borderRadius: '12px', 
+                                    background: bg,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between',
+                                    boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
+                                }}
+                            >
+                                <div>
+                                    <div style={{ fontSize: '24px', color: '#878787', marginBottom: '8px', fontFamily: 'Inter' }}>
+                                        {getAccountTypeName(acc.accountType)}
+                                    </div>
+                                    <div style={{ fontSize: '48px', fontWeight: '900', color: '#000', letterSpacing: '-0.5px', fontFamily: 'Inter' }}>
+                                        {formatBalance(mainWallet.balance)} 
+                                        {` ${mainWallet.currency}`}
+                                    </div>
+                                </div>
+                                
+                                <div style={{ marginTop: '30px' }}>
+                                    {acc.paymentCard ? (
+                                        <div style={{ backgroundColor: '#222', color: '#fff', padding: '6px 12px', borderRadius: '6px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 'bold' }}>
+                                            <span style={{ color: '#ff9800' }}>●●</span>
+                                            **** {acc.paymentCard.cardNumber.slice(-4)}
+                                        </div>
+                                    ) : (
+                                        <div style={{ fontSize: '12px', color: '#555', marginTop: '10px' }}>No card</div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+
+                    <div 
+                        onClick={() => { if (!isDragging) navigate('/u/create-account'); }}
+                        style={{
+                            width: '455px',
+                            flexShrink: 0,
+                            height: '245px',
+                            padding: '20px',
+                            borderRadius: '12px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                            border: '2px dashed #99c2ff',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#0056b3',
+                            transition: 'background-color 0.2s'
+                        }}
+                    >
+                        <div style={{ fontSize: '36px', fontWeight: '300', marginBottom: '10px' }}>+</div>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold' }}>Open new account</div>
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '15px' }}>
+                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#4a67ff' }}></div>
+                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#aebcfc' }}></div>
+                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#aebcfc' }}></div>
+                </div>
+            </div>
+            
+
+            {/*
             <div style={{ border: '1px solid #ffc107', padding: '25px', borderRadius: '8px', backgroundColor: '#fffdf6', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
                 <h2 style={{ color: '#d39e00', marginTop: 0, textAlign: 'center', marginBottom: '25px' }}>My Accounts</h2>
 
@@ -94,7 +211,6 @@ function Dashboard() {
                                         {getAccountTypeName(acc.accountType)}
                                     </span>
                                     
-                                    {/* if the account is multi-currency, we show an additional yellow label */}
                                     {acc.multiCurrency && (
                                         <span style={{ 
                                             backgroundColor: '#ffc107', 
@@ -177,6 +293,7 @@ function Dashboard() {
                     </div>
                 )}
             </div>
+            */}
         </div>
     );
 }

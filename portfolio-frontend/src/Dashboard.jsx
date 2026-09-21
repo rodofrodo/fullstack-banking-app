@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { formatAccountNumber, formatBalance } from './global/utils';
 import { useNavigate } from 'react-router-dom';
+import mastercardLogo from './assets/mastercard-logo.png';
+import './Dashboard.css';
 
 function Dashboard() {
     const [accounts, setAccounts] = useState([]);
@@ -80,7 +82,7 @@ function Dashboard() {
     };
 
     return (
-        <div style={{ maxWidth: '1300px', margin: '20px auto', fontFamily: 'sans-serif' }}>
+        <div className='dashboard-container'>
             
             {/* Wstrzykujemy CSS ukrywający systemowy pasek przewijania */}
             <style>{`
@@ -88,12 +90,12 @@ function Dashboard() {
                 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
 
-            <div style={{ backgroundColor: '#D7EEFF', borderRadius: '22px', padding: '25px 25px 15px 25px' }}>
-                <h2 style={{ margin: '0 0 20px 0', fontSize: '22px', color: '#000', fontWeight: 'bold', fontFamily: 'Inter' }}>
+            <div className='bank-accounts-section'>
+                <h2 className='section-title'>
                     Bank accounts
                 </h2>
 
-                {/* Kontener karuzeli z podpiętą referencją i eventami myszy */}
+                {/* carousel container with scroll and mouse events */}
                 <div 
                     ref={scrollRef}
                     className="hide-scrollbar"
@@ -105,7 +107,7 @@ function Dashboard() {
                         overflowX: 'auto', 
                         paddingBottom: '10px',
                         cursor: 'grab',
-                        userSelect: 'none' // Zapobiega zaznaczaniu tekstu podczas przeciągania
+                        userSelect: 'none'
                     }}
                 >
                     {accounts.map((acc, index) => {
@@ -120,39 +122,33 @@ function Dashboard() {
 
                         return (
                             <div 
+                                className='account-card'
                                 key={acc.id} 
                                 onClick={() => handleCardClick(acc)}
-                                style={{ 
-                                    width: '455px', 
-                                    flexShrink: 0,
-                                    height: '245px',
-                                    padding: '20px', 
-                                    borderRadius: '12px', 
-                                    background: bg,
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'space-between',
-                                    boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
-                                }}
+                                style={{ background: bg }}
                             >
-                                <div>
-                                    <div style={{ fontSize: '24px', color: '#878787', marginTop: '6px', fontFamily: 'Inter' }}>
+                                <div className='account-card-info'>
+                                    <div className='account-card-label'>
                                         {getAccountTypeName(acc.accountType)}
                                     </div>
-                                    <div style={{ fontSize: '48px', fontWeight: '800', color: '#000', fontFamily: 'Inter', marginTop: '11px' }}>
+                                    <div className='account-card-balance'>
                                         {formatBalance(mainWallet.balance)} 
                                         {` ${mainWallet.currency}`}
                                     </div>
                                 </div>
                                 
-                                <div style={{ marginTop: '30px' }}>
+                                <div className='payment-card'>
                                     {acc.paymentCard ? (
-                                        <div style={{ backgroundColor: '#222', color: '#fff', padding: '6px 12px', borderRadius: '6px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 'bold' }}>
-                                            <span style={{ color: '#ff9800' }}>●●</span>
-                                            **** {acc.paymentCard.cardNumber.slice(-4)}
+                                        <div className='payment-card-info'>
+                                            <img src={mastercardLogo} alt="Mastercard Logo" width="36"
+                                                style={{ marginTop: '4px' }}
+                                            />
+                                            <p className='payment-card-number'>
+                                                **** {acc.paymentCard.cardNumber.slice(-4)}
+                                            </p>
                                         </div>
                                     ) : (
-                                        <div style={{ fontSize: '12px', color: '#555', marginTop: '10px' }}></div>
+                                        <div style={{ fontSize: '12px', color: '#555' }}></div>
                                     )}
                                 </div>
                             </div>
@@ -160,21 +156,10 @@ function Dashboard() {
                     })}
 
                     <div 
+                        className='account-card new-account-card'
                         onClick={() => { if (!isDragging) navigate('/u/create-account'); }}
                         style={{
-                            width: '455px',
-                            flexShrink: 0,
-                            height: '245px',
-                            padding: '20px',
-                            borderRadius: '12px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.4)',
-                            border: '2px dashed #99c2ff',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#0056b3',
-                            transition: 'background-color 0.2s'
+                            
                         }}
                     >
                         <div style={{ fontSize: '36px', fontWeight: '300', marginBottom: '10px' }}>+</div>

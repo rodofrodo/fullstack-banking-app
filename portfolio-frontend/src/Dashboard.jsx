@@ -42,12 +42,12 @@ function Dashboard() {
 
     const getAccountTypeName = (type) => {
         switch (type) {
-            case 'PERSONAL': return 'Personal Account';
-            case 'BUSINESS': return 'Business Account';
-            case 'POCKET': return 'Pocket Account';
-            case 'SAVINGS': return 'Savings Account';
-            case 'BONDS': return 'Bonds Account';
-            default: return 'Standard Account';
+            case 'PERSONAL': return 'Personal account';
+            case 'BUSINESS': return 'Business account';
+            case 'POCKET': return 'Pocket account';
+            case 'SAVINGS': return 'Savings account';
+            case 'BONDS': return 'Bonds account';
+            default: return 'Standard account';
         };
     };
 
@@ -88,7 +88,7 @@ function Dashboard() {
                 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
 
-            <div style={{ backgroundColor: '#e2f0fe', borderRadius: '22px', padding: '25px 25px 15px 25px' }}>
+            <div style={{ backgroundColor: '#D7EEFF', borderRadius: '22px', padding: '25px 25px 15px 25px' }}>
                 <h2 style={{ margin: '0 0 20px 0', fontSize: '22px', color: '#000', fontWeight: 'bold', fontFamily: 'Inter' }}>
                     Bank accounts
                 </h2>
@@ -112,9 +112,9 @@ function Dashboard() {
                         const mainWallet = acc.wallets && acc.wallets.length > 0 ? acc.wallets[0] : { balance: 0, currency: 'PLN' };
                         
                         const gradients = [
-                            'linear-gradient(135deg, #cde4fa, #a5d2fc)', 
-                            'linear-gradient(135deg, #e4cbf8, #c1aef7)', 
-                            'linear-gradient(135deg, #cbf8eb, #a5fce4)'
+                            'linear-gradient(135deg, #FF828235, #008CFF35)', 
+                            'linear-gradient(135deg, #FF45DD35, #002BFF35)', 
+                            'linear-gradient(135deg, #82FFF035, #008CFF35)'
                         ];
                         const bg = gradients[index % gradients.length];
 
@@ -136,10 +136,10 @@ function Dashboard() {
                                 }}
                             >
                                 <div>
-                                    <div style={{ fontSize: '24px', color: '#878787', marginBottom: '8px', fontFamily: 'Inter' }}>
+                                    <div style={{ fontSize: '24px', color: '#878787', marginTop: '6px', fontFamily: 'Inter' }}>
                                         {getAccountTypeName(acc.accountType)}
                                     </div>
-                                    <div style={{ fontSize: '48px', fontWeight: '900', color: '#000', letterSpacing: '-0.5px', fontFamily: 'Inter' }}>
+                                    <div style={{ fontSize: '48px', fontWeight: '800', color: '#000', fontFamily: 'Inter', marginTop: '11px' }}>
                                         {formatBalance(mainWallet.balance)} 
                                         {` ${mainWallet.currency}`}
                                     </div>
@@ -152,7 +152,7 @@ function Dashboard() {
                                             **** {acc.paymentCard.cardNumber.slice(-4)}
                                         </div>
                                     ) : (
-                                        <div style={{ fontSize: '12px', color: '#555', marginTop: '10px' }}>No card</div>
+                                        <div style={{ fontSize: '12px', color: '#555', marginTop: '10px' }}></div>
                                     )}
                                 </div>
                             </div>

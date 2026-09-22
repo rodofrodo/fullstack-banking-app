@@ -53,6 +53,17 @@ function Dashboard() {
         };
     };
 
+    const getAccountGradient = (type) => {
+        switch (type) {
+            case 'PERSONAL': return 'linear-gradient(135deg, #FF828235, #008CFF35)';
+            case 'BUSINESS': return 'linear-gradient(135deg, #FF45DD35, #002BFF35)';
+            case 'POCKET': return 'linear-gradient(135deg, #00FFE135, #1EFF0035)';
+            case 'SAVINGS': return 'linear-gradient(135deg, #82FFF035, #008CFF35)';
+            case 'BONDS': return 'linear-gradient(135deg, #FB00FF35, #FF6A0035)';
+            default: return 'linear-gradient(135deg, #f4f7fb, #e2e8f0)';
+        };
+    };
+
     // --- Logika przesuwania myszką ---
     const handleMouseDown = (e) => {
         setIsDragging(false); // Resetujemy flagę przeciągania
@@ -112,13 +123,7 @@ function Dashboard() {
                 >
                     {accounts.map((acc, index) => {
                         const mainWallet = acc.wallets && acc.wallets.length > 0 ? acc.wallets[0] : { balance: 0, currency: 'PLN' };
-                        
-                        const gradients = [
-                            'linear-gradient(135deg, #FF828235, #008CFF35)', 
-                            'linear-gradient(135deg, #FF45DD35, #002BFF35)', 
-                            'linear-gradient(135deg, #82FFF035, #008CFF35)'
-                        ];
-                        const bg = gradients[index % gradients.length];
+                        const bg = getAccountGradient(acc.accountType);
 
                         return (
                             <div 

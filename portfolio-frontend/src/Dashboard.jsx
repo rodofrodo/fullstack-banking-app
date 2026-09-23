@@ -145,7 +145,7 @@ function Dashboard() {
                                 <div className='payment-card'>
                                     {acc.paymentCard ? (
                                         <div className='payment-card-info'>
-                                            <img src={mastercardLogo} alt="Mastercard Logo" width="36"
+                                            <img src={mastercardLogo} alt="Mastercard Logo" width="32"
                                                 style={{ marginTop: '4px' }}
                                             />
                                             <p className='payment-card-number'>

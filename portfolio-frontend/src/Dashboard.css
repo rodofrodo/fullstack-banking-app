@@ -18,10 +18,10 @@
 }
 
 .account-card {
-    width: 455px;
+    width: 406px;
+    height: 219px;
     flex-shrink: 0;
     font-family: 'Inter';
-    height: 245px;
     padding: 20px;
     border-radius: 12px;
     display: flex;
@@ -30,22 +30,22 @@
 }
 
 .account-card-label {
-    font-size: 24px; 
+    font-size: 22px; 
     color: #878787; 
     margin-top: 6px; 
     font-family: 'Inter'
 }
 
 .account-card-balance {
-    font-size: 48px; 
+    font-size: 44px; 
     font-weight: 800; 
     color: #000; 
     font-family: 'Inter'; 
-    margin-top: 11px
+    margin-top: 4px
 }
 
 .payment-card {
-    margin-top: 15px;
+    margin-top: 25px;
 }
 
 .payment-card-info {
@@ -61,16 +61,14 @@
 .payment-card-number {
     font-weight: 700; 
     font-family: 'Inter'; 
-    font-size: 16px; 
+    font-size: 14px; 
     margin: 0;
     margin-top: 10px;
     padding-right: 4px
 }
 
 .account-card.new-account-card {
-    width: 455px;
     flex-shrink: 0;
-    height: 245px;
     padding: 20px;
     border-radius: 12px;
     background-color: rgba(255, 255, 255, 0.4);

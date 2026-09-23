@@ -20,6 +20,7 @@
 .account-card {
     width: 455px;
     flex-shrink: 0;
+    font-family: 'Inter';
     height: 245px;
     padding: 20px;
     border-radius: 12px;
@@ -79,5 +80,6 @@
     align-items: center;
     justify-content: center;
     color: #0056b3;
+    font-family: 'Inter';
     transition: background-color 0.2s;
 }

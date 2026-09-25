@@ -7,8 +7,7 @@ import './Dashboard.css';
 
 function Dashboard() {
     const [accounts, setAccounts] = useState([]);
-    const [selectedAccount, setSelectedAccount] = useState(null);
-    const [accountMessage, setAccountMessage] = useState('');
+    const [currentPage, setCurrentPage] = useState(0);
     const navigate = useNavigate();
 
     // new states
@@ -30,7 +29,7 @@ function Dashboard() {
 
             // we choose the first account automatically
             if (response.data.length > 0)
-                setSelectedAccount(response.data[0]);
+                setCurrentPage(0);
         } catch (error) {
             console.error("Cannot download the accounts: ", error);
         }
@@ -64,64 +63,46 @@ function Dashboard() {
         };
     };
 
-    // --- Logika przesuwania myszką ---
-    const handleMouseDown = (e) => {
-        setIsDragging(false); // Resetujemy flagę przeciągania
-        setStartX(e.pageX - scrollRef.current.offsetLeft);
-        setScrollLeft(scrollRef.current.scrollLeft);
-    };
-
-    const handleMouseMove = (e) => {
-        // e.buttons === 1 oznacza, że lewy przycisk myszy jest wciśnięty
-        if (e.buttons !== 1) return; 
-        
-        const x = e.pageX - scrollRef.current.offsetLeft;
-        const walk = x - startX;
-        
-        // Jeśli myszka przesunęła się o więcej niż 5px, traktujemy to jako przeciąganie, a nie kliknięcie
-        if (Math.abs(walk) > 5) {
-            setIsDragging(true);
-        }
-        
-        scrollRef.current.scrollLeft = scrollLeft - walk;
-    };
-
     const handleCardClick = (acc) => {
         // Blokujemy nawigację, jeśli użytkownik tylko przesuwał karuzelę
-        if (isDragging) return;
         navigate(`/u/account/${acc.id}`, { state: { account: acc } });
     };
 
+    const itemsToDisplay = [...accounts, { isNewAccountButton: true, id: 'add-new-btn' }];
+    const itemsPerPage = 3;
+    const totalPages = Math.ceil(itemsToDisplay.length / itemsPerPage);
+    const currentItems = itemsToDisplay.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+
     return (
         <div className='dashboard-container'>
-            
-            {/* Wstrzykujemy CSS ukrywający systemowy pasek przewijania */}
-            <style>{`
-                .hide-scrollbar::-webkit-scrollbar { display: none; }
-                .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-            `}</style>
-
             <div className='bank-accounts-section'>
                 <h2 className='section-title'>
                     Bank accounts
                 </h2>
 
                 {/* carousel container with scroll and mouse events */}
-                <div 
-                    ref={scrollRef}
-                    className="hide-scrollbar"
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    style={{ 
+                <div style={{ 
                         display: 'flex', 
-                        gap: '15px', 
-                        overflowX: 'auto', 
-                        paddingBottom: '10px',
-                        cursor: 'grab',
-                        userSelect: 'none'
+                        gap: '15px',
                     }}
                 >
-                    {accounts.map((acc, index) => {
+                    {currentItems.map((item) => {
+                        if (item.isNewAccountButton) {
+                            return (
+                                <div 
+                                    className='account-card new-account-card'
+                                    onClick={() => { if (!isDragging) navigate('/u/create-account'); }}
+                                    style={{
+                                        
+                                    }}
+                                >
+                                    <div style={{ fontSize: '36px', fontWeight: '300', marginBottom: '10px' }}>+</div>
+                                    <div style={{ fontSize: '16px', fontWeight: 'bold' }}>Open new account</div>
+                                </div>
+                            );
+                        }
+
+                        const acc = item;
                         const mainWallet = acc.wallets && acc.wallets.length > 0 ? acc.wallets[0] : { balance: 0, currency: 'PLN' };
                         const bg = getAccountGradient(acc.accountType);
 
@@ -160,22 +141,31 @@ function Dashboard() {
                         );
                     })}
 
-                    <div 
-                        className='account-card new-account-card'
-                        onClick={() => { if (!isDragging) navigate('/u/create-account'); }}
-                        style={{
-                            
-                        }}
-                    >
-                        <div style={{ fontSize: '36px', fontWeight: '300', marginBottom: '10px' }}>+</div>
-                        <div style={{ fontSize: '16px', fontWeight: 'bold' }}>Open new account</div>
-                    </div>
+                    
                 </div>
-
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '15px' }}>
-                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#4a67ff' }}></div>
-                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#aebcfc' }}></div>
-                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#aebcfc' }}></div>
+            
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    gap: '6px', 
+                    marginTop: '20px',
+                    minHeight: '6px',
+                    visibility: totalPages > 1 ? 'visible' : 'hidden'
+                    }}>
+                    {Array.from({ length: totalPages }).map((_, idx) => (
+                        <div 
+                            key={idx}
+                            onClick={() => setCurrentPage(idx)}
+                            style={{ 
+                                width: '6px', 
+                                height: '6px', 
+                                borderRadius: '50%', 
+                                cursor: 'pointer',
+                                backgroundColor: currentPage === idx ? '#4a67ff' : '#aebcfc',
+                                transition: 'background-color 0.2s ease'
+                            }}
+                        ></div>
+                    ))}
                 </div>
             </div>
             

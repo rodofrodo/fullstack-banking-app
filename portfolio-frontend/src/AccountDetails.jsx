@@ -1,4 +1,5 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { formatBalance, formatAccountNumber } from './global/utils'; // Dodany import funkcji formatAccountNumber
 
@@ -8,6 +9,33 @@ function AccountDetails() {
     const navigate = useNavigate();
 
     const acc = location.state?.account;
+
+    const [accounts, setAccounts] = useState([]);
+
+    const fetchAccounts = async () => {
+        const token = localStorage.getItem('jwt_token');
+        if (!token) return;
+
+        try {
+            const response = await axios.get(
+                'http://localhost:8080/api/accounts/my',
+                { headers: { Authorization: 'Bearer ' + token } }
+            );
+            setAccounts(response.data);
+
+            // we choose the first account automatically
+            if (response.data.length > 0)
+                setSelectedAccount(response.data[0]);
+        } catch (error) {
+            console.error("Cannot download the accounts: ", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchAccounts();
+    }, []);
+
+    const hasAnyCard = accounts.some(acc => acc.paymentCard != null);
 
     if (!acc) {
         return (
@@ -106,7 +134,7 @@ function AccountDetails() {
                             </div>
                         </div>
                     ) : (
-                        acc.paymentCard != null && (acc.accountType === 'PERSONAL' || acc.accountType === 'BUSINESS') && (
+                        !hasAnyCard && (acc.accountType === 'PERSONAL' || acc.accountType === 'BUSINESS') && (
                             <div style={{ textAlign: 'center' }}>
                                 <button
                                     onClick={() => navigate(`/u/order-card/${acc.accountNumber}`)}

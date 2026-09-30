@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { formatBalance, formatAccountNumber } from './global/utils'; // Dodany import funkcji formatAccountNumber
 
+// TODO: design of this
+
 function AccountDetails() {
     const { id } = useParams(); 
     const location = useLocation();

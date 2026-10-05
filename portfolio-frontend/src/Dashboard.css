@@ -14,14 +14,14 @@
     font-size: 22px; 
     color: #000; 
     font-weight: bold; 
-    font-family: 'Inter';
+    font-family: 'Inter', system-ui, sans-serif;
 }
 
 .account-card {
     width: 406px;
     height: 219px;
     flex-shrink: 0;
-    font-family: 'Inter';
+    font-family: 'Inter', system-ui, sans-serif;
     padding: 20px;
     border-radius: 12px;
     display: flex;
@@ -33,14 +33,14 @@
     font-size: 22px; 
     color: #878787; 
     margin-top: 6px; 
-    font-family: 'Inter'
+    font-family: 'Inter', system-ui, sans-serif;
 }
 
 .account-card-balance {
     font-size: 44px; 
     font-weight: 800; 
     color: #000; 
-    font-family: 'Inter'; 
+    font-family: 'Inter', system-ui, sans-serif; 
     margin-top: 4px
 }
 
@@ -60,7 +60,7 @@
 
 .payment-card-number {
     font-weight: 700; 
-    font-family: 'Inter'; 
+    font-family: 'Inter', system-ui, sans-serif; 
     font-size: 14px; 
     margin: 0;
     margin-top: 10px;
@@ -78,6 +78,6 @@
     align-items: center;
     justify-content: center;
     color: #0056b3;
-    font-family: 'Inter';
+    font-family: 'Inter', system-ui, sans-serif;
     transition: background-color 0.2s;
 }

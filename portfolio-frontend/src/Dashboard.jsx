@@ -169,7 +169,7 @@ function Dashboard() {
                 </div>
             </div>
             
-
+{/**TODO: delete this section */}
             {/*
             <div style={{ border: '1px solid #ffc107', padding: '25px', borderRadius: '8px', backgroundColor: '#fffdf6', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
                 <h2 style={{ color: '#d39e00', marginTop: 0, textAlign: 'center', marginBottom: '25px' }}>My Accounts</h2>

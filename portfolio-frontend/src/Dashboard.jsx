@@ -77,7 +77,7 @@ function Dashboard() {
         <div className='dashboard-container'>
             <div className='bank-accounts-section'>
                 <h2 className='section-title'>
-                    Bank accounts
+                    Bank accounts (yessir)
                 </h2>
 
                 {/* carousel container with scroll and mouse events */}

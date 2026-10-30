@@ -169,8 +169,13 @@ function Dashboard() {
                 </div>
             </div>
 
-            <div>
-                <p>Recent transactions</p>
+            <div className='recent-transactions-section'>
+                <h2 className='section-title'>
+                    Recent transactions
+                </h2>
+
+                {/* For tests */}
+                
             </div>
         </div>
     );

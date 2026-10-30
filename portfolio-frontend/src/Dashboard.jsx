@@ -175,7 +175,35 @@ function Dashboard() {
                 </h2>
 
                 {/* For tests */}
-                
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
+                    fontSize: '14px',
+                    color: '#333'
+                }}>
+                    <div style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px',
+                        padding: '10px 15px'
+                    }}>
+                        <p>lmao</p>
+                    </div>
+                    <div style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px',
+                        padding: '10px 15px'
+                    }}>
+                        <p>lmao</p>
+                    </div>
+                    <div style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px',
+                        padding: '10px 15px'
+                    }}>
+                        <p>lmao</p>
+                    </div>
+                </div>
             </div>
         </div>
     );

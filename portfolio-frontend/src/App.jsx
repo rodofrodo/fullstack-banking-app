@@ -11,6 +11,7 @@ import AdminDashboard from './AdminDashboard';
 import CreateAccount from './CreateAccount';
 import OrderCard from './OrderCard';
 import Profile from './Profile';
+import AccountDetails from './AccountDetails';
 import { Routes, Route, Navigate, useNavigate, Link, NavLink, useLocation } from 'react-router-dom';
 
 const getRoleFromToken = (token) => {
@@ -107,6 +108,7 @@ function App() {
                 {/* sub routes */}
                 <Route path="/u/create-account" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <CreateAccount /> : <Navigate to="/" />} />
                 <Route path="/u/order-card/:accountNumber" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <OrderCard /> : <Navigate to="/" />} />
+                <Route path="/u/account/:id" element={isLoggedIn && role !== 'ROLE_ADMIN' ? <AccountDetails /> : <Navigate to="/" />} />
 
                 {/* admin */}
                 <Route path="/admin/dashboard" element={isLoggedIn && role === 'ROLE_ADMIN' ? <AdminDashboard /> : <Navigate to="/" />} />
@@ -118,6 +120,6 @@ function App() {
             </Routes>
         </div>
     );
-}//.
+}
 
 export default App;

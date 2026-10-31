@@ -1,12 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { formatAccountNumber, formatBalance } from './global/utils';
 import { useNavigate } from 'react-router-dom';
+import mastercardLogo from './assets/mastercard-logo.png';
+import './Dashboard.css';
 
 function Dashboard() {
-    const [accountMessage, setAccountMessage] = useState('');
     const [accounts, setAccounts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
     const navigate = useNavigate();
+
+    // new states
+    const scrollRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
 
     const fetchAccounts = async () => {
         const token = localStorage.getItem('jwt_token');
@@ -18,6 +26,10 @@ function Dashboard() {
                 { headers: { Authorization: 'Bearer ' + token } }
             );
             setAccounts(response.data);
+
+            // we choose the first account automatically
+            if (response.data.length > 0)
+                setCurrentPage(0);
         } catch (error) {
             console.error("Cannot download the accounts: ", error);
         }
@@ -27,189 +39,171 @@ function Dashboard() {
         fetchAccounts();
     }, []);
 
-    const handleCreateAccount = async () => {
-        const token = localStorage.getItem('jwt_token');
-        if (!token) {
-            setAccountMessage('❌ No token! You need to sign in first.');
-            return;
-        }
-
-        try {
-            // for tests
-            const payload = {
-                accountType: 'PERSONAL',
-                isMultiCurrency: true,
-                baseCurrency: 'PLN'
-            };
-
-            const response = await axios.post(
-                'http://localhost:8080/api/accounts/create',
-                payload,
-                { headers: { Authorization: 'Bearer ' + token } }
-            );
-            setAccountMessage('✅ ' + response.data);
-            fetchAccounts();
-        } catch (error) {
-            const errorMsg = error.response?.data ? (typeof error.response.data === 'string' ? error.response.data : JSON.stringify(error.response.data)) : 'Server connection error.';
-            setAccountMessage('❌ ' + errorMsg);
-        }
-    };
-
-    const handleOrderCard = async (accountNumber) => {
-        const token = localStorage.getItem('jwt_token');
-        if (!token)
-        {
-            setAccountMessage('❌ No token! You need to sign in first.');
-            return;
-        }
-        setAccountMessage(''); 
-
-        try {
-            const response = await axios.post(
-                'http://localhost:8080/api/cards/create',
-                { accountNumber: accountNumber },
-                { headers: { Authorization: 'Bearer ' + token } }
-            );
-
-            setAccountMessage('✅ ' + response.data);
-            fetchAccounts();
-        } catch (error) {
-            let errorMsg = 'Server connection error.';
-            let statusCode = 'Unknown';
-            
-            if (error.response) {
-                statusCode = error.response.status;
-                if (typeof error.response.data === 'string' && error.response.data.trim() !== '') {
-                    errorMsg = error.response.data;
-                } else if (statusCode === 403) {
-                    errorMsg = 'Access denied by Spring Security (403).';
-                } else if (statusCode === 400) {
-                    errorMsg = 'Bad Request (400) - check JSON mapping.';
-                } else {
-                    errorMsg = JSON.stringify(error.response.data);
-                }
-            }
-            setAccountMessage(`❌ Error ${statusCode}: ${errorMsg}`);
-        }
-    };
-
     const hasAnyCard = accounts.some(acc => acc.paymentCard != null);
 
     const getAccountTypeName = (type) => {
         switch (type) {
-            case 'PERSONAL': return 'Personal Account';
-            case 'BUSINESS': return 'Business Account';
-            case 'POCKET': return 'Pocket Account';
-            case 'SAVINGS': return 'Savings Account';
-            case 'BONDS': return 'Bonds Account';
-            default: return 'Standard Account';
+            case 'PERSONAL': return 'Personal account';
+            case 'BUSINESS': return 'Business account';
+            case 'POCKET': return 'Pocket account';
+            case 'SAVINGS': return 'Savings account';
+            case 'BONDS': return 'Bonds account';
+            default: return 'Standard account';
         };
     };
 
+    const getAccountGradient = (type) => {
+        switch (type) {
+            case 'PERSONAL': return 'linear-gradient(135deg, #FF828235, #008CFF35)';
+            case 'BUSINESS': return 'linear-gradient(135deg, #FF45DD35, #002BFF35)';
+            case 'POCKET': return 'linear-gradient(135deg, #00FFE135, #1EFF0035)';
+            case 'SAVINGS': return 'linear-gradient(135deg, #82FFF035, #008CFF35)';
+            case 'BONDS': return 'linear-gradient(135deg, #FB00FF35, #FF6A0035)';
+            default: return 'linear-gradient(135deg, #f4f7fb, #e2e8f0)';
+        };
+    };
+
+    const handleCardClick = (acc) => {
+        // Blokujemy nawigację, jeśli użytkownik tylko przesuwał karuzelę
+        navigate(`/u/account/${acc.id}`, { state: { account: acc } });
+    };
+
+    const itemsToDisplay = [...accounts, { isNewAccountButton: true, id: 'add-new-btn' }];
+    const itemsPerPage = 3;
+    const totalPages = Math.ceil(itemsToDisplay.length / itemsPerPage);
+    const currentItems = itemsToDisplay.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+
     return (
-        <div style={{ maxWidth: '650px', margin: '20px auto', fontFamily: 'sans-serif' }}>
-            <div style={{ border: '1px solid #ffc107', padding: '25px', borderRadius: '8px', backgroundColor: '#fffdf6', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
-                <h2 style={{ color: '#d39e00', marginTop: 0, textAlign: 'center', marginBottom: '25px' }}>My Accounts</h2>
+        <div className='dashboard-container'>
+            <div className='bank-accounts-section'>
+                <h2 className='section-title'>
+                    Bank accounts
+                </h2>
 
-                {accounts.length > 0 ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '25px' }}>
-                        {accounts.map(acc => (
-                            <div key={acc.id} style={{ padding: '20px', border: '2px solid #ffeeba', borderRadius: '8px', backgroundColor: '#fff', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                
-                                <div style={{ marginBottom: '10px', display: 'flex', gap: '10px' }}>
-                                    <span style={{ 
-                                        backgroundColor: '#004085', 
-                                        color: 'white', 
-                                        padding: '4px 10px', 
-                                        borderRadius: '12px', 
-                                        fontSize: '12px', 
-                                        fontWeight: 'bold' 
-                                    }}>
+                {/* carousel container with scroll and mouse events */}
+                <div style={{ 
+                        display: 'flex', 
+                        gap: '15px',
+                    }}
+                >
+                    {currentItems.map((item) => {
+                        if (item.isNewAccountButton) {
+                            return (
+                                <div 
+                                    className='account-card new-account-card'
+                                    onClick={() => { if (!isDragging) navigate('/u/create-account'); }}
+                                    style={{
+                                        
+                                    }}
+                                >
+                                    <div style={{ fontSize: '36px', fontWeight: '300', marginBottom: '10px' }}>+</div>
+                                    <div style={{ fontSize: '16px', fontWeight: 'bold' }}>Open new account</div>
+                                </div>
+                            );
+                        }
+
+                        const acc = item;
+                        const mainWallet = acc.wallets && acc.wallets.length > 0 ? acc.wallets[0] : { balance: 0, currency: 'PLN' };
+                        const bg = getAccountGradient(acc.accountType);
+
+                        return (
+                            <div 
+                                className='account-card'
+                                key={acc.id} 
+                                onClick={() => handleCardClick(acc)}
+                                style={{ background: bg }}
+                            >
+                                <div className='account-card-info'>
+                                    <div className='account-card-label'>
                                         {getAccountTypeName(acc.accountType)}
-                                    </span>
-                                    
-                                    {/* if the account is multi-currency, we show an additional yellow label */}
-                                    {acc.multiCurrency && (
-                                        <span style={{ 
-                                            backgroundColor: '#ffc107', 
-                                            color: '#000', 
-                                            padding: '4px 10px', 
-                                            borderRadius: '12px', 
-                                            fontSize: '12px', 
-                                            fontWeight: 'bold' 
-                                        }}>
-                                            Multi-Currency
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
-                                    <div style={{ textAlign: 'left', flex: '1' }}>
-                                        <span style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '5px' }}>Account number</span>
-                                        <strong style={{ fontSize: '15px', color: '#333' }}>{formatAccountNumber(acc.accountNumber)}</strong>
                                     </div>
-                                    <div style={{ textAlign: 'right', flex: '1' }}>
-                                        <span style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '5px' }}>Balances</span>
-                                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                                            {acc.wallets && acc.wallets.map(wallet => (
-                                                <span key={wallet.currency} style={{ backgroundColor: '#e9f7ef', color: '#28a745', border: '1px solid #c3e6cb', padding: '4px 8px', borderRadius: '6px', fontSize: '13px', fontWeight: 'bold' }}>
-                                                    {formatBalance(wallet.balance)} {wallet.currency}
-                                                </span>
-                                            ))}
-                                        </div>
+                                    <div className='account-card-balance'>
+                                        {formatBalance(mainWallet.balance)} 
+                                        {` ${mainWallet.currency}`}
                                     </div>
                                 </div>
-
-                                <div style={{ height: '1px', backgroundColor: '#eee', width: '100%' }}></div>
-
-                                <div>
+                                
+                                <div className='payment-card'>
                                     {acc.paymentCard ? (
-                                        <div style={{ backgroundColor: '#222', color: '#fff', padding: '15px 20px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', boxShadow: '0 4px 6px rgba(0,0,0,0.2)' }}>
-                                            <div style={{ textAlign: 'left' }}>
-                                                <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#aaa', letterSpacing: '1px', marginBottom: '8px' }}>Debit Card</div>
-                                                <div style={{ fontSize: '18px', letterSpacing: '2px', fontFamily: 'monospace' }}>
-                                                    **** **** **** {acc.paymentCard.cardNumber.slice(-4)}
-                                                </div>
-                                            </div>
-                                            <div style={{ textAlign: 'right' }}>
-                                                <div style={{ fontSize: '10px', color: '#aaa', letterSpacing: '1px' }}>EXP</div>
-                                                <div style={{ fontSize: '14px', fontFamily: 'monospace' }}>{acc.paymentCard.expirationDate}</div>
-                                            </div>
+                                        <div className='payment-card-info'>
+                                            <img src={mastercardLogo} alt="Mastercard Logo" width="32"
+                                                style={{ marginTop: '4px' }}
+                                            />
+                                            <p className='payment-card-number'>
+                                                **** {acc.paymentCard.cardNumber.slice(-4)}
+                                            </p>
                                         </div>
                                     ) : (
-                                        !hasAnyCard && (acc.accountType === 'PERSONAL' || acc.accountType === 'BUSINESS') && (
-                                            <div style={{ textAlign: 'center' }}>
-                                                <button
-                                                    onClick={() => navigate(`/u/order-card/${acc.accountNumber}`)}
-                                                    style={{ padding: '10px 20px', backgroundColor: '#333', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold', transition: 'background-color 0.2s' }}
-                                                    onMouseOver={(e) => e.target.style.backgroundColor = '#555'}
-                                                    onMouseOut={(e) => e.target.style.backgroundColor = '#333'}
-                                                >
-                                                    💳 Order Debit Card
-                                                </button>
-                                            </div>
-                                        )
+                                        <div style={{ fontSize: '12px', color: '#555' }}></div>
                                     )}
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p style={{ color: '#666', fontStyle: 'italic', textAlign: 'center' }}>You don't have any accounts yet.</p>
-                )}
+                        );
+                    })}
 
-                <button 
-                    onClick={() => navigate('/u/create-account')} 
-                    style={{ cursor: 'pointer', padding: '12px', backgroundColor: '#ffc107', color: '#333', border: 'none', borderRadius: '5px', fontWeight: 'bold', width: '100%', fontSize: '15px' }}
-                >
-                    ➕ Open new bank account
-                </button>
-                
-                {accountMessage && (
-                    <div style={{ marginTop: '20px', padding: '10px', borderRadius: '5px', textAlign: 'center', fontWeight: 'bold', backgroundColor: accountMessage.includes('✅') ? '#d4edda' : '#f8d7da', color: accountMessage.includes('✅') ? '#155724' : '#721c24', border: `1px solid ${accountMessage.includes('✅') ? '#c3e6cb' : '#f5c6cb'}` }}>
-                        {accountMessage}
+                    
+                </div>
+            
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    gap: '6px', 
+                    marginTop: '20px',
+                    minHeight: '6px',
+                    visibility: totalPages > 1 ? 'visible' : 'hidden'
+                    }}>
+                    {Array.from({ length: totalPages }).map((_, idx) => (
+                        <div 
+                            key={idx}
+                            onClick={() => setCurrentPage(idx)}
+                            style={{ 
+                                width: '6px', 
+                                height: '6px', 
+                                borderRadius: '50%', 
+                                cursor: 'pointer',
+                                backgroundColor: currentPage === idx ? '#4a67ff' : '#aebcfc',
+                                transition: 'background-color 0.2s ease'
+                            }}
+                        ></div>
+                    ))}
+                </div>
+            </div>
+
+            <div className='recent-transactions-section'>
+                <h2 className='section-title'>
+                    Recent transactions
+                </h2>
+
+                {/* For tests */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
+                    fontSize: '14px',
+                    color: '#333'
+                }}>
+                    <div style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px',
+                        padding: '10px 15px'
+                    }}>
+                        <p>lmao</p>
                     </div>
-                )}
+                    <div style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px',
+                        padding: '10px 15px'
+                    }}>
+                        <p>lmao</p>
+                    </div>
+                    <div style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px',
+                        padding: '10px 15px'
+                    }}>
+                        <p>lmao</p>
+                    </div>
+                </div>
             </div>
         </div>
     );

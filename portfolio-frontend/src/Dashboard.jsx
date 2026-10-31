@@ -183,25 +183,189 @@ function Dashboard() {
                     color: '#333'
                 }}>
                     <div style={{
+                        display: 'flex',
+                        flexDirection: 'row',
                         backgroundColor: '#ffffff',
                         borderRadius: '10px',
                         padding: '10px 15px'
                     }}>
-                        <p>lmao</p>
+                        <div style={{
+                            backgroundColor: '#F2F2F2',
+                            borderRadius: '10px',
+                            padding: '10px 15px',
+                            width: '56px',
+                            height: '56px'
+                        }}>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '5px',
+                            justifyContent: 'center',
+                            marginLeft: '13px'
+                        }}>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '16px',
+                                fontWeight: '700'
+                            }}>Netflix Premium</p>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '14px',
+                                fontWeight: '400',
+                                color: '#696969'
+                            }}>October 29, 2026</p>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '5px',
+                            justifyContent: 'center',
+                            marginLeft: 'auto',
+                            marginRight: '5px'
+                        }}>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '16px',
+                                fontWeight: '700',
+                                textAlign: 'right'
+                            }}>-19.99 USD</p>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '14px',
+                                fontWeight: '400',
+                                textAlign: 'right',
+                                color: '#696969'
+                            }}>Subscription</p>
+                        </div>
                     </div>
+                    {/* --- */}
                     <div style={{
+                        display: 'flex',
+                        flexDirection: 'row',
                         backgroundColor: '#ffffff',
                         borderRadius: '10px',
                         padding: '10px 15px'
                     }}>
-                        <p>lmao</p>
+                        <div style={{
+                            backgroundColor: '#F2F2F2',
+                            borderRadius: '10px',
+                            padding: '10px 15px',
+                            width: '56px',
+                            height: '56px'
+                        }}>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '5px',
+                            justifyContent: 'center',
+                            marginLeft: '13px'
+                        }}>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '16px',
+                                fontWeight: '700'
+                            }}>Spotify Premium</p>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '14px',
+                                fontWeight: '400',
+                                color: '#696969'
+                            }}>October 28, 2026</p>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '5px',
+                            justifyContent: 'center',
+                            marginLeft: 'auto',
+                            marginRight: '5px'
+                        }}>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '16px',
+                                fontWeight: '700',
+                                textAlign: 'right'
+                            }}>-16.98 USD</p>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '14px',
+                                fontWeight: '400',
+                                textAlign: 'right',
+                                color: '#696969'
+                            }}>Subscription</p>
+                        </div>
                     </div>
+                    {/* --- */}
                     <div style={{
+                        display: 'flex',
+                        flexDirection: 'row',
                         backgroundColor: '#ffffff',
                         borderRadius: '10px',
                         padding: '10px 15px'
                     }}>
-                        <p>lmao</p>
+                        <div style={{
+                            backgroundColor: '#F2F2F2',
+                            borderRadius: '10px',
+                            padding: '10px 15px',
+                            width: '56px',
+                            height: '56px'
+                        }}>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '5px',
+                            justifyContent: 'center',
+                            marginLeft: '13px'
+                        }}>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '16px',
+                                fontWeight: '700'
+                            }}>Money transfer</p>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '14px',
+                                fontWeight: '400',
+                                color: '#696969'
+                            }}>October 27, 2026</p>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '5px',
+                            justifyContent: 'center',
+                            marginLeft: 'auto',
+                            marginRight: '5px'
+                        }}>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '16px',
+                                fontWeight: '700',
+                                textAlign: 'right'
+                            }}>+4500.00 CHF</p>
+                            <p style={{ 
+                                margin: '0',
+                                fontFamily: 'Inter',
+                                fontSize: '14px',
+                                fontWeight: '400',
+                                textAlign: 'right',
+                                color: '#696969'
+                            }}>Traditional transfer</p>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -369,6 +369,12 @@ function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            <div>
+                <h2>
+                    There will be a section
+                </h2>
+            </div>
         </div>
     );
 }

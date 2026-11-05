@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Profile.css'; // Import the CSS file for styling
 import axios from 'axios';
+import defaultAvatar from './assets/default-person.png'
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -66,9 +67,6 @@ export default function Profile() {
             reader.readAsDataURL(file);
         }
     };
-
-    // default avatar
-    const defaultAvatar = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80";
 
     return (
         <div className='profile-page'>

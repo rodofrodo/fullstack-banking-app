@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import defaultAvatar from './assets/default-person.png'
 
 export default function P2PTransferWidget({ onUserSelected }) {
     // vars
@@ -30,9 +31,6 @@ export default function P2PTransferWidget({ onUserSelected }) {
 
         return () => clearTimeout(delayDebounceFn);
     }, [searchQuery]);
-
-    // default avatar
-    const defaultAvatar = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80";
 
     return (
         <div className="p2p-search-container" style={{ position: 'relative', width: '100%', maxWidth: '400px' }}>

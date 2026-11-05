@@ -23,7 +23,7 @@ public class JwtService
                 .withIssuedAt(new Date()) // issue date
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
                 .sign(algorithm); // signature with a secret key
-    }
+    }//.
 
     public String extractEmail(String token)
     {

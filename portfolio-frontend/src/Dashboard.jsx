@@ -374,7 +374,7 @@ function Dashboard() {
                 <h2>
                     There will be a section
                 </h2>
-            </div>
+            </div>{/* TODO: Add content for this section */}
         </div>
     );
 }

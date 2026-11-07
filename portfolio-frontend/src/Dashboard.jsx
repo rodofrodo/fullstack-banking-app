@@ -372,7 +372,7 @@ function Dashboard() {
                 </div>
 
                 <div className='future-right-section'>
-                    <h2>
+                    <h2 className='section-title'>
                         There will be a section
                     </h2>
                 </div>{/* TODO: Add content for this section */}

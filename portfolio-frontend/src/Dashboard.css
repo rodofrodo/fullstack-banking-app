@@ -21,12 +21,12 @@
     background-color: #CAFAFF;
     border-radius: 22px; 
     padding: 25px 25px 15px 25px;
-    max-width: 550px;
+    width: 550px;
     flex-shrink: 0;
 }
 
 .future-right-section {
-    background-color: #e5fce0; /* Opcjonalny kolor tła (jasnozielony z poprzednich designów) */
+    background-color: #CAFFED; /* Opcjonalny kolor tła (jasnozielony z poprzednich designów) */
     border-radius: 22px;
     padding: 25px;
     flex-grow: 1; /* KLUCZOWE: Sprawia, że sekcja wypełni całą wolną przestrzeń do prawej krawędzi (do 1300px) */

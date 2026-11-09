@@ -373,7 +373,7 @@ function Dashboard() {
 
                 <div className='future-right-section'>
                     <h2 className='section-title'>
-                        There will be a section
+                        Quick transfer
                     </h2>
                 </div>{/* TODO: Add content for this section */}
             </div>

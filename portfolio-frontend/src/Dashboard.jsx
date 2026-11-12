@@ -381,6 +381,12 @@ function Dashboard() {
                     <h2 className='section-title'>
                         Settings
                     </h2>
+                    <p className='section-description'>
+                        Customize your profile, change the design, or completely renovate this account.
+                    </p>
+                    <button className='settings-btn'>
+                        Go to settings
+                    </button>
                 </div>{/* TODO: Add content for this section */}
             </div>
         </div>

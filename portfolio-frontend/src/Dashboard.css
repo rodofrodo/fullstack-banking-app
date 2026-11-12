@@ -39,13 +39,30 @@
     width: 300px;
 }
 
-/* TODO: Add content for this section */
+.settings-btn {
+    background-color: #D7F2FF; 
+    border: none; 
+    padding: 10px 25px; 
+    border-radius: 50px; 
+    cursor: pointer; 
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #0083C5;
+}
 
 .section-title {
     margin: 0 0 20px 0; 
     font-size: 22px; 
     color: #000; 
     font-weight: bold; 
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.section-description {
+    margin: 0 0 20px 0; 
+    font-size: 16px; 
+    color: #696969; 
     font-family: 'Inter', system-ui, sans-serif;
 }
 

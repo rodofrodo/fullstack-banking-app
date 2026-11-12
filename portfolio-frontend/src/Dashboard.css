@@ -21,7 +21,7 @@
     background-color: #CAFAFF;
     border-radius: 22px; 
     padding: 25px 25px 15px 25px;
-    width: 550px;
+    width: 553px;
     flex-shrink: 0;
 }
 
@@ -29,7 +29,14 @@
     background-color: #CAFFED; /* Opcjonalny kolor tła (jasnozielony z poprzednich designów) */
     border-radius: 22px;
     padding: 25px;
-    flex-grow: 1; /* KLUCZOWE: Sprawia, że sekcja wypełni całą wolną przestrzeń do prawej krawędzi (do 1300px) */
+    width: 382px;
+}
+
+.settings-section {
+    background-color: #EFCAFF; /* Opcjonalny kolor tła (jasnozielony z poprzednich designów) */
+    border-radius: 22px;
+    padding: 25px;
+    width: 300px;
 }
 
 /* TODO: Add content for this section */

@@ -376,6 +376,12 @@ function Dashboard() {
                         Quick transfer
                     </h2>
                 </div>{/* TODO: Add content for this section */}
+
+                <div className='settings-section'>
+                    <h2 className='section-title'>
+                        Settings
+                    </h2>
+                </div>{/* TODO: Add content for this section */}
             </div>
         </div>
     );
